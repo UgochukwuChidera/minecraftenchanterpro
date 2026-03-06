@@ -23,9 +23,28 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
-    version: "1.4.0",
+    version: "1.5.0",
     date: "2026-03-06",
     label: "latest",
+    entries: [
+      { tag: "new",      text: "Mace (1.21+) — added with full enchantment support: Density I–V, Breach I–IV, Wind Burst I–III, plus Smite, Bane, Fire Aspect, Looting, Mending, Unbreaking, Curse of Vanishing." },
+      { tag: "new",      text: "Shield — added with Unbreaking, Mending, and Curse of Vanishing." },
+      { tag: "new",      text: "Spear (1.21.11 Mounts of Mayhem) — added as Bedrock-only item with exclusive Lunge I–III enchantment, plus standard combat enchants." },
+      { tag: "new",      text: "Java vs Bedrock edition toggle — persisted to localStorage. Hides Java-only enchants (Sweeping Edge, Swift Sneak) on Bedrock. Swaps Impaling description to Bedrock behaviour (all mobs in rain). Spear shown on Bedrock only." },
+      { tag: "new",      text: "Share button — encodes your item and enchant selection into a URL. Send your build to a friend; opening the link pre-fills the calculator exactly." },
+      { tag: "new",      text: "XP cost breakdown chart — collapsible panel showing each enchant's contribution as colour-coded bars (blue → yellow → red by cost). Off by default." },
+      { tag: "new",      text: "Enchant search/filter — appears on items with 6+ enchants (helmets, boots, etc). Live filter with a clear button." },
+      { tag: "new",      text: "Export results — copy the full step-by-step as plain text to paste into a notes app or Discord." },
+      { tag: "new",      text: "Keyboard shortcuts — Space to calculate, Esc to clear. Ignored while typing in inputs. Shown as subtle hints above the item grid." },
+      { tag: "new",      text: "Recently used — last 5 items shown as a quick-pick strip above the full item grid, persisted to localStorage." },
+      { tag: "fix",      text: "Preset deletion bug fixed — presetUid now seeds from the highest saved ID on startup, preventing ID collisions that caused multiple presets to be deleted at once." },
+      { tag: "fix",      text: "White screen crash fixed — PresetCard was defined as a nested function inside PresetsPanel while calling useMemo, violating React's Rules of Hooks. Extracted to a top-level component." },
+      { tag: "improved", text: "Fonts now self-hosted via @fontsource packages — typography is fully preserved offline without any Google Fonts network request." },
+    ]
+  },
+  {
+    version: "1.4.0",
+    date: "2026-03-06",
     entries: [
       { tag: "new",      text: "Offline support — full PWA with service worker caching. All features work without internet after first load." },
       { tag: "new",      text: "Changelog page — you're reading it." },
@@ -93,14 +112,14 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("1.4.0");
+  const [expanded, setExpanded] = useState("1.5.0");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
       <style>{`
         .cl-card { transition: border-color .15s; }
         .cl-card:hover { border-color: rgba(166,110,255,.3) !important; }
-      `}</style>  
+      `}</style>
 
       {/* Header */}
       <div style={{ marginBottom: 20, padding: "14px 18px", background: T.surface,
