@@ -295,7 +295,6 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;500&display=swap');`}</style>
 
       {/* Item selector */}
       <Sec label="01" title="ITEM & MATERIAL">

@@ -218,7 +218,6 @@ export default function HowToUse() {
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;500&display=swap');
         .guide-nav-btn { transition: all .12s; cursor: pointer; }
         .guide-nav-btn:hover { background: rgba(166,110,255,.1) !important; }
       `}</style>

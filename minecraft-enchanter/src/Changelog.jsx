@@ -97,10 +97,10 @@ export default function Changelog() {
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;500&display=swap');
+      <style>{`
         .cl-card { transition: border-color .15s; }
         .cl-card:hover { border-color: rgba(166,110,255,.3) !important; }
-      `}</style>
+      `}</style>  
 
       {/* Header */}
       <div style={{ marginBottom: 20, padding: "14px 18px", background: T.surface,
