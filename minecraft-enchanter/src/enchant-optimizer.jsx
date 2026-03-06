@@ -1,6 +1,8 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import MaterialCalc from "./MaterialCalc";
 import HowToUse from "./HowToUse";
+import Changelog from "./Changelog";
+import VersionBadge, { APP_VERSION } from "./VersionBadge";
 
 // ═══════════════════════════════════════════════════════════
 //  ENCHANTMENT DATA  (wiki integrated)
@@ -1077,6 +1079,7 @@ export default function App() {
     { id: "presets", label: `💾 PRESETS${presets.length ? ` (${presets.length})` : ""}` },
     { id: "materials", label: "⛏️ MATERIALS" },
     { id: "guide", label: "📖 GUIDE" },
+    { id: "changelog", label: "📋 CHANGELOG" },
   ];
 
   return (
@@ -1094,7 +1097,12 @@ export default function App() {
             }}>
               ANVIL OPTIMIZER
             </h1>
-            <p style={{ marginTop: 8, color: "#333", fontSize: 11 }}>Wiki · Presets · Set Builder · DP-optimized XP cost</p>
+            <p style={{ marginTop: 8, color: "#333", fontSize: 11 }}>
+              Wiki · Presets · Set Builder · DP-optimized XP cost
+            </p>
+            <div style={{ marginTop: 8 }}>
+              <VersionBadge onClick={() => setTab("changelog")} />
+            </div>
           </div>
 
           {/* Tabs */}
@@ -1152,6 +1160,9 @@ export default function App() {
           )}
           {tab === "guide" && (
             <HowToUse />
+          )}
+          {tab === "changelog" && (
+            <Changelog />
           )}
         </div>
       </div>
