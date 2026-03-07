@@ -6,6 +6,7 @@ import CostChart from "./CostChart.jsx";
 import MaterialCalc from "./MaterialCalc.jsx";
 import HowToUse from "./HowToUse.jsx";
 import Changelog from "./Changelog.jsx";
+import Support from "./Support.jsx";
 import VersionBadge from "./VersionBadge.jsx";
 
 const RECENT_KEY = "mc_recent";
@@ -729,6 +730,7 @@ export default function App() {
     { id: "materials", label: "⛏️ MATERIALS" },
     { id: "guide",     label: "📖 GUIDE" },
     { id: "changelog", label: "📋 CHANGELOG" },
+    { id: "support",   label: "💬 SUPPORT" },
   ];
 
   return (
@@ -772,6 +774,7 @@ export default function App() {
           {tab === "materials" && <MaterialCalc E={E} ITEMS={ITEMS} rom={rom} />}
           {tab === "guide"     && <HowToUse />}
           {tab === "changelog" && <Changelog />}
+          {tab === "support"   && <Support />}
         </div>
       </div>
     </>

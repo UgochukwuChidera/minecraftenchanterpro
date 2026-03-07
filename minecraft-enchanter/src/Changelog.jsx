@@ -22,9 +22,18 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
-    version: "1.6.0",
+    version: "1.7.0",
     date: "2026-03-07",
     label: "latest",
+    entries: [
+      { tag: "new",      text: "Support tab — send bug reports, feature requests, or wrong-data corrections directly to the developer's inbox. Completely free via Web3Forms (no backend, no credit card)." },
+      { tag: "new",      text: "Online / offline detection — the support form shows a live connection indicator. Going offline triggers an instant warning toast. A background poll (every 8s) detects reconnection and fires a 'back online' toast, re-enabling the form automatically." },
+      { tag: "new",      text: "Toast notification system — slide-in toasts for send success, errors, online/offline state changes. Auto-dismiss after 4 seconds." },
+    ]
+  },
+  {
+    version: "1.6.0",
+    date: "2026-03-07",
     entries: [
       { tag: "new",      text: "Pre-enchanted mode — toggle on to declare what enchantments your item already has and how many prior anvil uses it has (0–5). The solver correctly applies the item's prior-work penalty to the final step, and automatically hides incompatible enchants from the 'add' list." },
       { tag: "new",      text: "8 new items added: Brush, Shears, Elytra, Flint & Steel, Carrot on a Stick, Fungus on a Stick, Turtle Shell, Carved Pumpkin — each with correct enchantment pools." },
@@ -123,7 +132,7 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("1.6.0");
+  const [expanded, setExpanded] = useState("1.7.0");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
