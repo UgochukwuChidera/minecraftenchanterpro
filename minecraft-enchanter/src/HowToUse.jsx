@@ -227,7 +227,7 @@ export default function HowToUse() {
         {SECTIONS.map(s => (
           <button key={s.id} className="guide-nav-btn" onClick={() => setActive(s.id)}
             style={{
-              padding: "6px 12px", borderRadius: 6, border: "none", cursor: "pointer",
+              padding: "6px 12px", borderRadius: 6, cursor: "pointer",
               background: active === s.id ? T.accentBg : T.s2,
               color: active === s.id ? T.accent : T.muted,
               border: `1px solid ${active === s.id ? "rgba(166,110,255,.3)" : T.border}`,

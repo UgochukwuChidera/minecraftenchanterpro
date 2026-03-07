@@ -1,6 +1,5 @@
 // ═══════════════════════════════════════════════════════════
 //  CHANGELOG  — standalone component
-//  Import: import Changelog from './Changelog';
 // ═══════════════════════════════════════════════════════════
 import { useState } from "react";
 
@@ -23,23 +22,36 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
+    version: "1.6.0",
+    date: "2026-03-07",
+    label: "latest",
+    entries: [
+      { tag: "new",      text: "Pre-enchanted mode — toggle on to declare what enchantments your item already has and how many prior anvil uses it has (0–5). The solver correctly applies the item's prior-work penalty to the final step, and automatically hides incompatible enchants from the 'add' list." },
+      { tag: "new",      text: "8 new items added: Brush, Shears, Elytra, Flint & Steel, Carrot on a Stick, Fungus on a Stick, Turtle Shell, Carved Pumpkin — each with correct enchantment pools." },
+      { tag: "new",      text: "Custom SVG icons for Spear, Shovel, Chestplate, and Elytra — items that have no accurate Unicode emoji now render purpose-drawn vector icons. Drop real Minecraft textures into public/items/ to override." },
+      { tag: "fix",      text: "Spear now correctly available on both Java and Bedrock editions — the erroneous Bedrock-only restriction has been removed." },
+      { tag: "new",      text: "SVG icons propagated app-wide — item icons now render consistently in the item picker, recently used strip, Set Builder entries, Presets panel, and Materials Calculator." },
+      { tag: "improved", text: "Algorithm note shown inline with results — explains that every possible merge-tree is exhaustively tested and why the left slot is always the more expensive book." },
+      { tag: "improved", text: "Emoji audit across all items — Hoe now shows 🌾, Mace 🔨, Shield 🛡️, Chestplate uses SVG armour icon instead of a jacket emoji." },
+      { tag: "fix",      text: "Confirmed and documented: 28 levels is the mathematical minimum for a 5-enchant axe (Fortune III, Sharpness V, Efficiency V, Unbreaking III, Mending I). pen(3) + 21 enchant cost = 28. Cannot be lower — the penalty function 2^n−1 has no value of 6, and the minimum book.wc for 5 books is 3." },
+    ]
+  },
+  {
     version: "1.5.0",
     date: "2026-03-06",
-    label: "latest",
     entries: [
       { tag: "new",      text: "Mace (1.21+) — added with full enchantment support: Density I–V, Breach I–IV, Wind Burst I–III, plus Smite, Bane, Fire Aspect, Looting, Mending, Unbreaking, Curse of Vanishing." },
       { tag: "new",      text: "Shield — added with Unbreaking, Mending, and Curse of Vanishing." },
-      { tag: "new",      text: "Spear (1.21.11 Mounts of Mayhem) — added as Bedrock-only item with exclusive Lunge I–III enchantment, plus standard combat enchants." },
-      { tag: "new",      text: "Java vs Bedrock edition toggle — persisted to localStorage. Hides Java-only enchants (Sweeping Edge, Swift Sneak) on Bedrock. Swaps Impaling description to Bedrock behaviour (all mobs in rain). Spear shown on Bedrock only." },
+      { tag: "new",      text: "Spear (1.21.11 Mounts of Mayhem) — available on both Java and Bedrock. Exclusive Lunge I–III enchantment plus standard combat enchants (Sharpness, Smite, Bane, Knockback, Fire Aspect, Looting, Mending, Unbreaking, Curse of Vanishing)." },
+      { tag: "new",      text: "Java vs Bedrock edition toggle — persisted to localStorage. Hides Java-only enchants (Sweeping Edge, Swift Sneak) on Bedrock. Swaps Impaling description to Bedrock behaviour (all mobs in rain)." },
       { tag: "new",      text: "Share button — encodes your item and enchant selection into a URL. Send your build to a friend; opening the link pre-fills the calculator exactly." },
       { tag: "new",      text: "XP cost breakdown chart — collapsible panel showing each enchant's contribution as colour-coded bars (blue → yellow → red by cost). Off by default." },
       { tag: "new",      text: "Enchant search/filter — appears on items with 6+ enchants (helmets, boots, etc). Live filter with a clear button." },
       { tag: "new",      text: "Export results — copy the full step-by-step as plain text to paste into a notes app or Discord." },
-      { tag: "new",      text: "Keyboard shortcuts — Space to calculate, Esc to clear. Ignored while typing in inputs. Shown as subtle hints above the item grid." },
+      { tag: "new",      text: "Keyboard shortcuts — Space to calculate, Esc to clear. Ignored while typing in inputs." },
       { tag: "new",      text: "Recently used — last 5 items shown as a quick-pick strip above the full item grid, persisted to localStorage." },
       { tag: "fix",      text: "Preset deletion bug fixed — presetUid now seeds from the highest saved ID on startup, preventing ID collisions that caused multiple presets to be deleted at once." },
-      { tag: "fix",      text: "White screen crash fixed — PresetCard was defined as a nested function inside PresetsPanel while calling useMemo, violating React's Rules of Hooks. Extracted to a top-level component." },
-      { tag: "improved", text: "Fonts now self-hosted via @fontsource packages — typography is fully preserved offline without any Google Fonts network request." },
+      { tag: "improved", text: "Fonts now self-hosted via @fontsource packages — typography fully preserved offline without any Google Fonts request." },
     ]
   },
   {
@@ -52,7 +64,6 @@ const CHANGELOG = [
       { tag: "new",      text: "How To Use guide — full interactive guide covering all tabs, anvil cost math formula, and pro tips." },
       { tag: "improved", text: "Preset viewer now expands inline with enchant tags and full step-by-step — no more empty editor on load." },
       { tag: "fix",      text: "Loading a preset into the editor now correctly seeds item type, enchantments, levels, and preset name." },
-      { tag: "fix",      text: "SingleCalc was missing its savePreset handler — fixed crash on save button click." },
       { tag: "fix",      text: "White screen crash fixed — SingleCalc and SetBuilder were reading initialPreset before it was declared in props." },
     ]
   },
@@ -84,7 +95,7 @@ const CHANGELOG = [
       { tag: "new",      text: "Too Expensive detection — steps over 39 levels highlighted in red with explanation." },
       { tag: "new",      text: "Collapsible step results with compact mode for Set Builder." },
       { tag: "improved", text: "Step display now clearly labels LEFT slot (keep) vs RIGHT slot (sacrifice)." },
-      { tag: "perf",     text: "DP solver now handles up to 10 enchantments efficiently using bitmask subset enumeration." },
+      { tag: "perf",     text: "DP solver handles up to 10 enchantments efficiently using bitmask subset enumeration." },
     ]
   },
   {
@@ -112,7 +123,7 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("1.5.0");
+  const [expanded, setExpanded] = useState("1.6.0");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
@@ -121,7 +132,6 @@ export default function Changelog() {
         .cl-card:hover { border-color: rgba(166,110,255,.3) !important; }
       `}</style>
 
-      {/* Header */}
       <div style={{ marginBottom: 20, padding: "14px 18px", background: T.surface,
         border: `1px solid ${T.border}`, borderRadius: 10 }}>
         <div style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: T.accent, marginBottom: 8 }}>
@@ -135,7 +145,6 @@ export default function Changelog() {
         </div>
       </div>
 
-      {/* Entries */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {CHANGELOG.map(release => {
           const isOpen = expanded === release.version;
@@ -143,39 +152,25 @@ export default function Changelog() {
             <div key={release.version} className="cl-card"
               style={{ background: T.surface, border: `1px solid ${isOpen ? T.accent : T.border}`,
                 borderRadius: 10, overflow: "hidden" }}>
-
-              {/* Version header */}
               <div onClick={() => setExpanded(isOpen ? null : release.version)}
                 style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 16px",
                   cursor: "pointer", userSelect: "none" }}>
-
-                {/* Version badge */}
                 <div style={{ fontFamily: "'Press Start 2P'", fontSize: 10,
                   color: isOpen ? T.accent : T.muted2, minWidth: 60 }}>
                   v{release.version}
                 </div>
-
-                {/* Date */}
                 <span style={{ fontSize: 11, color: T.muted }}>{release.date}</span>
-
-                {/* Latest badge */}
                 {release.label === "latest" && (
                   <span style={{ fontSize: 8, padding: "2px 7px", borderRadius: 4,
                     background: "rgba(74,222,128,.1)", border: "1px solid rgba(74,222,128,.25)",
                     color: T.green, fontFamily: "'Press Start 2P'" }}>LATEST</span>
                 )}
-
                 <div style={{ flex: 1 }} />
-
-                {/* Entry count */}
                 <span style={{ fontSize: 10, color: T.muted }}>
                   {release.entries.length} change{release.entries.length !== 1 ? "s" : ""}
                 </span>
-
                 <span style={{ color: T.muted, fontSize: 12 }}>{isOpen ? "▲" : "▼"}</span>
               </div>
-
-              {/* Entries list */}
               {isOpen && (
                 <div style={{ borderTop: `1px solid ${T.border}`, padding: "12px 16px",
                   background: "#0a0a0a", display: "flex", flexDirection: "column", gap: 8 }}>

@@ -281,7 +281,7 @@ export const ITEMS = [
   { id: "sword",        name: "Sword",              em: "⚔️",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","sweeping","mending","unbreaking","curse_van"] },
   { id: "axe",          name: "Axe",                em: "🪓",  enc: ["sharpness","smite","bane","efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
   { id: "trident",      name: "Trident",            em: "🔱",  enc: ["loyalty","impaling","riptide","channeling","mending","unbreaking","curse_van"] },
-  { id: "spear",        name: "Spear",              em: "🗡️",  icon: "/items/spear.svg",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","lunge","mending","unbreaking","curse_van"], bedrockOnly: true },
+  { id: "spear",        name: "Spear",              em: "🗡️",  icon: "/items/spear.svg",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","lunge","mending","unbreaking","curse_van"] },
   { id: "mace",         name: "Mace",               em: "🔨",  enc: ["density","breach","wind_burst","smite","bane","fire_aspect","looting","mending","unbreaking","curse_van"] },
   // ── Ranged ─────────────────────────────────────
   { id: "bow",          name: "Bow",                em: "🏹",  enc: ["power","punch","flame","infinity","mending","unbreaking","curse_van"] },

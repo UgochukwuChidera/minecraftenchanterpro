@@ -307,7 +307,11 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
                 borderRadius: 7, padding: "7px 4px", textAlign: "center", cursor: "pointer",
                 transition: "all .1s",
               }}>
-              <div style={{ fontSize: 20 }}>{it.em}</div>
+              <div style={{ fontSize: 20, height: 26, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {it.icon
+                  ? <img src={it.icon} alt={it.name} style={{ width: 22, height: 22, objectFit: "contain", imageRendering: "crisp-edges" }} />
+                  : it.em}
+              </div>
               <div style={{ marginTop: 3, fontSize: 6, color: itemId === it.id ? "#c4a3ff" : "#555",
                 fontFamily: "'Press Start 2P'", lineHeight: 1.5 }}>{it.name.toUpperCase()}</div>
             </div>

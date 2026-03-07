@@ -9,6 +9,16 @@ import Changelog from "./Changelog.jsx";
 import VersionBadge from "./VersionBadge.jsx";
 
 const RECENT_KEY = "mc_recent";
+
+// ── ItemIcon — renders SVG file if item.icon exists, otherwise emoji ──────────
+function ItemIcon({ item, size = 22 }) {
+  if (!item) return null;
+  if (item.icon)
+    return <img src={item.icon} alt={item.name} style={{ width: size, height: size, objectFit: "contain", imageRendering: "crisp-edges", verticalAlign: "middle" }} />;
+  return <span style={{ fontSize: size }}>{item.em}</span>;
+}
+
+
 function loadRecent() {
   try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); } catch { return []; }
 }
@@ -499,7 +509,7 @@ function SetEntry({ entry, onUpdate, onRemove, edition }) {
   return (
     <div style={{ background: T.s2, border: `1px solid ${T.b2}`, borderRadius: 10, padding: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontSize: 20 }}>{item.em}</span>
+        <ItemIcon item={item} size={20} />
         <select value={entry.itemId} onChange={e => onUpdate({ ...entry, itemId: e.target.value, sel: {} })}
           style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 8px", color: T.text, fontSize: 12, flex: 1, fontFamily: "'IBM Plex Mono'", outline: "none" }}>
           {ITEMS.map(it => <option key={it.id} value={it.id}>{it.em} {it.name}</option>)}
@@ -581,7 +591,7 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
               return (
                 <div key={e.uid} style={{ marginBottom: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontSize: 16 }}>{item.em}</span>
+                    <ItemIcon item={item} size={16} />
                     <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{item.name}</span>
                     {e.qty > 1 && <span style={{ fontSize: 10, color: T.accent, fontFamily: "'Press Start 2P'" }}>×{e.qty}</span>}
                     <span style={{ fontSize: 10, color: T.muted, marginLeft: "auto" }}>{res.total} lvls/each{e.qty > 1 ? ` = ${res.total * e.qty} lvls total` : ""}</span>
@@ -616,7 +626,12 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, color: T.text, marginBottom: 3 }}>{p.name}</div>
           <div style={{ fontSize: 10, color: T.muted }}>
-            {p.type === "single" ? `${ITEMS.find(i => i.id === p.itemId)?.em} ${ITEMS.find(i => i.id === p.itemId)?.name} — ${Object.keys(p.sel).length} enchants` : `📦 Set — ${p.entries?.length} item type${p.entries?.length !== 1 ? "s" : ""}`}
+            {p.type === "single" ? (
+              <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <ItemIcon item={ITEMS.find(i => i.id === p.itemId)} size={13} />
+                {ITEMS.find(i => i.id === p.itemId)?.name} — {Object.keys(p.sel).length} enchants
+              </span>
+            ) : `📦 Set — ${p.entries?.length} item type${p.entries?.length !== 1 ? "s" : ""}`}
           </div>
         </div>
         <button onClick={e => { e.stopPropagation(); onLoad(p); }} style={{ background: "rgba(166,110,255,.1)", border: `1px solid rgba(166,110,255,.2)`, borderRadius: 5, padding: "5px 10px", fontSize: 10, color: T.accent, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>✏ edit</button>
@@ -628,7 +643,7 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
           {viewResults.map(({ item, sel, result, qty }, i) => (
             <div key={i} style={{ marginBottom: i < viewResults.length - 1 ? 16 : 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <span style={{ fontSize: 18 }}>{item.em}</span>
+                <ItemIcon item={item} size={18} />
                 <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{item.name}</span>
                 {qty > 1 && <span style={{ fontSize: 9, color: T.accent, fontFamily: "'Press Start 2P'" }}>×{qty}</span>}
               </div>
