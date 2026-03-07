@@ -167,7 +167,7 @@ export const E = {
   },
   frost_walker: {
     name: "Frost Walker", maxLvl: 2, mult: 2, incomp: ["depth_strider"],
-    desc: "Turns water blocks beneath the player into frosted ice as you walk, allowing traversal of water.",
+    desc: "Turns water blocks beneath the player into frosted ice as you walk.",
     levels: ["I — small radius of ice", "II — larger radius (~2.5 block radius)"],
     tip: "Treasure enchantment — only from loot/trades. Ice reverts to water when you step off. Incompatible with Depth Strider."
   },
@@ -200,7 +200,7 @@ export const E = {
   },
   riptide: {
     name: "Riptide", maxLvl: 3, mult: 2, incomp: ["loyalty", "channeling"],
-    desc: "Propels the player forward when the trident is thrown in water or rain. Trident doesn't fly normally.",
+    desc: "Propels the player forward when the trident is thrown in water or rain.",
     levels: ["I — 5 m/s launch speed", "II — 8 m/s", "III — 11 m/s"],
     tip: "Enables fast travel in rain. Combine with Depth Strider for aquatic mobility. Incompatible with Loyalty and Channeling."
   },
@@ -212,7 +212,7 @@ export const E = {
   },
   multishot: {
     name: "Multishot", maxLvl: 1, mult: 2, incomp: ["piercing"],
-    desc: "Fires 3 arrows in a spread pattern for the cost of 1 arrow. Extra arrows don't drop on impact.",
+    desc: "Fires 3 arrows in a spread pattern for the cost of 1 arrow.",
     levels: ["I — fires 3 arrows simultaneously (left, center, right)"],
     tip: "All 3 arrows can hit a single large mob. Excellent against groups. Incompatible with Piercing."
   },
@@ -241,7 +241,7 @@ export const E = {
     tip: "Combine with Luck of the Sea for maximum AFK fishing efficiency."
   },
 
-  // ── Spear (1.21.11 Mounts of Mayhem) ─────────────────
+  // ── Spear (1.21.11 Mounts of Mayhem, Bedrock) ────────
   lunge: {
     name: "Lunge", maxLvl: 3, mult: 2, incomp: [],
     desc: "Propels the player forward when performing a jab attack with a spear. Consumes hunger and durability per use.",
@@ -252,39 +252,58 @@ export const E = {
   // ── Mace (1.21+) ─────────────────────────────────────
   density: {
     name: "Density", maxLvl: 5, mult: 1, incomp: ["breach"],
-    desc: "Increases the mace's damage based on the height fallen before impact. Each level multiplies the fall-damage bonus.",
+    desc: "Increases the mace's damage based on the height fallen before impact.",
     levels: ["I — +0.5 dmg per block fallen", "II — +1.0", "III — +1.5", "IV — +2.0", "V — +2.5 per block fallen"],
-    tip: "The higher you fall before hitting, the more damage dealt. Stack with Wind Burst for a loop of jumps and crits. Incompatible with Breach."
+    tip: "The higher you fall before hitting, the more damage dealt. Incompatible with Breach."
   },
   breach: {
     name: "Breach", maxLvl: 4, mult: 2, incomp: ["density"],
     desc: "Reduces the effectiveness of the target's armor when hit with the mace.",
     levels: ["I — 15% armor reduction", "II — 30%", "III — 45%", "IV — 60% armor bypass"],
-    tip: "Powerful against heavily armoured players in PvP. Incompatible with Density — choose one based on your playstyle."
+    tip: "Powerful against heavily armoured players in PvP. Incompatible with Density."
   },
   wind_burst: {
     name: "Wind Burst", maxLvl: 3, mult: 4, incomp: [],
-    desc: "Launches the attacker upward when they kill an enemy with a mace smash attack, allowing chained aerial attacks.",
+    desc: "Launches the attacker upward when they kill an enemy with a mace smash attack.",
     levels: ["I — moderate upward launch", "II — strong launch", "III — very strong launch"],
-    tip: "Enables an aerial loop: fall → smash → Wind Burst launches you up → repeat. Expensive (×4 mult) but defines the mace's identity."
+    tip: "Enables an aerial loop: fall → smash → Wind Burst launches you up → repeat."
   },
 };
 
+// ═══════════════════════════════════════════════════════════
+//  ITEMS LIST  —  em is best-available emoji; real Minecraft
+//  sprites can be placed in /public/items/<id>.png (32×32 px)
+//  Source: extract from .minecraft/versions/<ver>/<ver>.jar
+//          → assets/minecraft/textures/item/
+// ═══════════════════════════════════════════════════════════
 export const ITEMS = [
-  { id: "sword",       name: "Sword",       em: "⚔️",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","sweeping","mending","unbreaking","curse_van"] },
-  { id: "pickaxe",     name: "Pickaxe",     em: "⛏️",  enc: ["efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
-  { id: "axe",         name: "Axe",         em: "🪓",  enc: ["sharpness","smite","bane","efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
-  { id: "shovel",      name: "Shovel",      em: "🪣",  enc: ["efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
-  { id: "hoe",         name: "Hoe",         em: "🌿",  enc: ["efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
-  { id: "bow",         name: "Bow",         em: "🏹",  enc: ["power","punch","flame","infinity","mending","unbreaking","curse_van"] },
-  { id: "crossbow",    name: "Crossbow",    em: "🎯",  enc: ["multishot","quick_charge","piercing","mending","unbreaking","curse_van"] },
-  { id: "helmet",      name: "Helmet",      em: "🪖",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","respiration","aqua_affinity","mending","unbreaking","curse_van","curse_bind","soul_speed"] },
-  { id: "chestplate",  name: "Chestplate",  em: "🛡️",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","mending","unbreaking","curse_van","curse_bind"] },
-  { id: "leggings",    name: "Leggings",    em: "👖",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","mending","unbreaking","curse_van","curse_bind","swift_sneak"] },
-  { id: "boots",       name: "Boots",       em: "🥾",  enc: ["protection","blast_prot","fire_prot","proj_prot","feather_fall","thorns","depth_strider","frost_walker","mending","unbreaking","curse_van","curse_bind","soul_speed"] },
-  { id: "fishing_rod", name: "Fishing Rod", em: "🎣",  enc: ["luck_of_sea","lure","mending","unbreaking","curse_van"] },
-  { id: "trident",     name: "Trident",     em: "🔱",  enc: ["loyalty","impaling","riptide","channeling","mending","unbreaking","curse_van"] },
-  { id: "spear",       name: "Spear",       em: "🗡️",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","lunge","mending","unbreaking","curse_van"] },
-  { id: "mace",        name: "Mace",        em: "🪄",  enc: ["density","breach","wind_burst","smite","bane","fire_aspect","looting","mending","unbreaking","curse_van"] },
-  { id: "shield",      name: "Shield",      em: "🛡",  enc: ["unbreaking","mending","curse_van"] },
+  // ── Melee weapons ──────────────────────────────
+  { id: "sword",        name: "Sword",              em: "⚔️",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","sweeping","mending","unbreaking","curse_van"] },
+  { id: "axe",          name: "Axe",                em: "🪓",  enc: ["sharpness","smite","bane","efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
+  { id: "trident",      name: "Trident",            em: "🔱",  enc: ["loyalty","impaling","riptide","channeling","mending","unbreaking","curse_van"] },
+  { id: "spear",        name: "Spear",              em: "🗡️",  icon: "/items/spear.svg",  enc: ["sharpness","smite","bane","knockback","fire_aspect","looting","lunge","mending","unbreaking","curse_van"], bedrockOnly: true },
+  { id: "mace",         name: "Mace",               em: "🔨",  enc: ["density","breach","wind_burst","smite","bane","fire_aspect","looting","mending","unbreaking","curse_van"] },
+  // ── Ranged ─────────────────────────────────────
+  { id: "bow",          name: "Bow",                em: "🏹",  enc: ["power","punch","flame","infinity","mending","unbreaking","curse_van"] },
+  { id: "crossbow",     name: "Crossbow",           em: "🎯",  enc: ["multishot","quick_charge","piercing","mending","unbreaking","curse_van"] },
+  // ── Tools ──────────────────────────────────────
+  { id: "pickaxe",      name: "Pickaxe",            em: "⛏️",  enc: ["efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
+  { id: "shovel",       name: "Shovel",             em: "🪣",   icon: "/items/shovel.svg",  enc: ["efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
+  { id: "hoe",          name: "Hoe",                em: "🌾",  enc: ["efficiency","silk_touch","fortune","mending","unbreaking","curse_van"] },
+  { id: "shears",       name: "Shears",             em: "✂️",  enc: ["efficiency","unbreaking","mending","curse_van"] },
+  { id: "brush",        name: "Brush",              em: "🖌️",  enc: ["fortune","unbreaking","mending","curse_van"] },
+  { id: "fishing_rod",  name: "Fishing Rod",        em: "🎣",  enc: ["luck_of_sea","lure","mending","unbreaking","curse_van"] },
+  { id: "flint_steel",  name: "Flint & Steel",      em: "🔥",  enc: ["unbreaking","mending","curse_van"] },
+  { id: "carrot_stick", name: "Carrot on a Stick",  em: "🥕",  enc: ["unbreaking","curse_van"] },
+  { id: "fungus_stick", name: "Fungus on a Stick",  em: "🍄",  enc: ["unbreaking","curse_van"] },
+  // ── Armor ──────────────────────────────────────
+  { id: "helmet",       name: "Helmet",             em: "🪖",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","respiration","aqua_affinity","mending","unbreaking","curse_van","curse_bind","soul_speed"] },
+  { id: "chestplate",   name: "Chestplate",         em: "🦺",   icon: "/items/chestplate.svg",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","mending","unbreaking","curse_van","curse_bind"] },
+  { id: "leggings",     name: "Leggings",           em: "👖",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","mending","unbreaking","curse_van","curse_bind","swift_sneak"] },
+  { id: "boots",        name: "Boots",              em: "🥾",  enc: ["protection","blast_prot","fire_prot","proj_prot","feather_fall","thorns","depth_strider","frost_walker","mending","unbreaking","curse_van","curse_bind","soul_speed"] },
+  { id: "turtle_shell", name: "Turtle Shell",       em: "🐢",  enc: ["protection","blast_prot","fire_prot","proj_prot","thorns","respiration","aqua_affinity","mending","unbreaking","curse_van","curse_bind"] },
+  { id: "elytra",       name: "Elytra",             em: "🪂",   icon: "/items/elytra.svg",  enc: ["unbreaking","mending","curse_van","curse_bind"] },
+  { id: "shield",       name: "Shield",             em: "🛡️",  enc: ["unbreaking","mending","curse_van"] },
+  // ── Other ──────────────────────────────────────
+  { id: "pumpkin",      name: "Carved Pumpkin",     em: "🎃",  enc: ["curse_bind","curse_van"] },
 ];

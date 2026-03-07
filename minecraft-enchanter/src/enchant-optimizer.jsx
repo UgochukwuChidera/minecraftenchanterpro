@@ -86,7 +86,7 @@ function WikiPanel({ id, edition }) {
   );
 }
 
-function EnchantPicker({ item, sel, onChange, edition }) {
+function EnchantPicker({ item, sel, onChange, edition, tint }) {
   const [openWiki, setOpenWiki] = useState(null);
   const [search, setSearch] = useState("");
 
@@ -244,7 +244,10 @@ function ItemGrid({ value, onChange }) {
                     borderRadius: 6, fontSize: 11,
                     color: value === id ? "#c4a3ff" : T.muted2, cursor: "pointer",
                   }}>
-                  <span style={{ fontSize: 14 }}>{it.em}</span><span>{it.name}</span>
+                  {it.icon
+                    ? <img src={it.icon} alt={it.name} style={{ width: 16, height: 16, objectFit: "contain" }} />
+                    : <span style={{ fontSize: 14 }}>{it.em}</span>}
+                  <span>{it.name}</span>
                 </div>
               );
             })}
@@ -257,7 +260,11 @@ function ItemGrid({ value, onChange }) {
         {ITEMS.map(it => (
           <div key={it.id} className="item-btn" onClick={() => handlePick(it.id)}
             style={{ background: value === it.id ? "#160e28" : T.s2, border: `1.5px solid ${value === it.id ? T.accent : T.border}`, borderRadius: 7, padding: "8px 4px", textAlign: "center", boxShadow: value === it.id ? "0 0 12px rgba(166,110,255,.2)" : "none" }}>
-            <div style={{ fontSize: 22 }}>{it.em}</div>
+            <div style={{ fontSize: 22, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {it.icon
+                ? <img src={it.icon} alt={it.name} style={{ width: 26, height: 26, objectFit: "contain", imageRendering: "crisp-edges" }} />
+                : it.em}
+            </div>
             <div style={{ marginTop: 4, fontSize: 7, color: value === it.id ? "#c4a3ff" : "#555", fontFamily: "'Press Start 2P'", lineHeight: 1.6 }}>{it.name.toUpperCase()}</div>
           </div>
         ))}
@@ -266,28 +273,65 @@ function ItemGrid({ value, onChange }) {
   );
 }
 
+// Work-count picker (0–5 prior anvil uses, each +1 doubles penalty)
+function WorkCountPicker({ value, onChange }) {
+  const T2 = { yellow: "#f5c400" };
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+      <span style={{ fontSize: 10, color: T.muted }}>Prior anvil uses on this item:</span>
+      <div style={{ display: "flex", gap: 3 }}>
+        {[0,1,2,3,4,5].map(n => (
+          <button key={n} onClick={() => onChange(n)}
+            style={{ width: 26, height: 22, borderRadius: 4, fontSize: 9, fontFamily: "'Press Start 2P'",
+              cursor: "pointer", lineHeight: 1,
+              background: value === n ? "rgba(245,196,0,.2)" : T.s3,
+              color:      value === n ? T2.yellow : T.muted2,
+              border:     `1px solid ${value === n ? "rgba(245,196,0,.4)" : T.border}`,
+            }}>{n}</button>
+        ))}
+      </div>
+      <span style={{ fontSize: 10, color: T.muted, fontFamily: "'IBM Plex Mono'" }}>
+        = +{Math.pow(2, value) - 1} lvl penalty
+      </span>
+    </div>
+  );
+}
+
 function SingleCalc({ onSavePreset, initialPreset, edition }) {
   const urlShare = useMemo(() => parseShareURL(), []);
   const seed = initialPreset || urlShare;
 
-  const [itemId, setItemId]     = useState(seed?.itemId || "sword");
-  const [sel, setSel]           = useState(seed?.sel    || {});
-  const [result, setResult]     = useState(null);
-  const [presetName, setPresetName] = useState(initialPreset?.name || "");
-  const [saved, setSaved]       = useState(false);
-  const [shareMsg, setShareMsg] = useState("");
-  const [showChart, setShowChart] = useState(false);
+  const [itemId,      setItemId]      = useState(seed?.itemId || "sword");
+  const [sel,         setSel]         = useState(seed?.sel    || {});
+  const [result,      setResult]      = useState(null);
+  const [presetName,  setPresetName]  = useState(initialPreset?.name || "");
+  const [saved,       setSaved]       = useState(false);
+  const [shareMsg,    setShareMsg]    = useState("");
+  const [showChart,   setShowChart]   = useState(false);
+  // ── Pre-enchanted mode ───────────────────────────────
+  const [preMode,     setPreMode]     = useState(false);
+  const [existing,    setExisting]    = useState({});   // enchants already on the item
+  const [itemWC,      setItemWC]      = useState(1);    // how many times item has been through anvil
+
   const resultsRef = useRef(null);
   const item  = ITEMS.find(i => i.id === itemId);
   const count = Object.keys(sel).length;
 
-  const pickItem = id => { setItemId(id); setSel({}); setResult(null); };
+  const pickItem = id => { setItemId(id); setSel({}); setExisting({}); setResult(null); };
+
+  // Build a filtered item that hides enchants already on the item + their incompatibles
+  const filteredItem = useMemo(() => {
+    if (!preMode || !Object.keys(existing).length) return item;
+    const blocked = new Set(Object.keys(existing));
+    Object.keys(existing).forEach(id => E[id]?.incomp?.forEach(x => blocked.add(x)));
+    return { ...item, enc: item.enc.filter(id => !blocked.has(id)) };
+  }, [item, existing, preMode]);
 
   const calc = useCallback(() => {
     if (!count) return;
-    setResult(solve(sel, item.name));
+    setResult(solve(sel, item.name, preMode ? itemWC : 0));
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-  }, [sel, item, count]);
+  }, [sel, item, count, preMode, itemWC]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -311,6 +355,8 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
     });
   };
 
+  const existingKeys = Object.keys(existing);
+
   return (
     <div>
       <div style={{ marginBottom: 10, fontSize: 10, color: "#2a2a2a", textAlign: "right" }}>
@@ -322,7 +368,53 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
         <ItemGrid value={itemId} onChange={pickItem} />
       </Sec>
 
-      <Sec label="02" title={`ENCHANTMENTS${count ? ` — ${count} SELECTED` : ""}`}
+      {/* ── Pre-enchanted mode toggle ── */}
+      <div style={{ marginBottom: 14 }}>
+        <button onClick={() => { setPreMode(p => !p); setExisting({}); setSel({}); setResult(null); }}
+          style={{ padding: "7px 14px", borderRadius: 6, fontSize: 10, cursor: "pointer",
+            fontFamily: "'IBM Plex Mono'",
+            background: preMode ? "rgba(245,196,0,.08)" : T.s2,
+            border:     `1px solid ${preMode ? "rgba(245,196,0,.3)" : T.border}`,
+            color:      preMode ? "#f5c400" : T.muted,
+          }}>
+          {preMode ? "🔒 Item already has enchantments (pre-enchanted mode ON)" : "🔓 Item is fresh — click to enter pre-enchanted mode"}
+        </button>
+        {preMode && (
+          <div style={{ marginTop: 6, fontSize: 10, color: T.muted, paddingLeft: 2 }}>
+            Select what's <em>already on the item</em> below, then pick what to add in section 02.
+          </div>
+        )}
+      </div>
+
+      {/* ── Existing enchantments (pre-enchanted mode only) ── */}
+      {preMode && (
+        <Sec label="01b" title="ALREADY ON THE ITEM">
+          <div style={{ marginBottom: 12 }}>
+            <WorkCountPicker value={itemWC} onChange={setItemWC} />
+          </div>
+          <div style={{ marginBottom: 10, padding: "8px 11px", background: "rgba(245,196,0,.05)",
+            border: "1px solid rgba(245,196,0,.15)", borderRadius: 6, fontSize: 10,
+            color: "#b89020", lineHeight: 1.7 }}>
+            💡 <strong>Prior anvil uses</strong> = how many times this item has already been through an anvil.
+            0 = came from enchanting table or chest loot. 1 = had one book applied. Each use doubles the penalty.
+          </div>
+          <EnchantPicker item={item} sel={existing}
+            onChange={n => { setExisting(n); setSel({}); setResult(null); }} edition={edition} tint="yellow" />
+          {existingKeys.length > 0 && (
+            <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {existingKeys.map(id => (
+                <span key={id} style={{ fontSize: 10, padding: "2px 8px",
+                  background: "rgba(245,196,0,.1)", border: "1px solid rgba(245,196,0,.2)",
+                  borderRadius: 4, color: "#f5c400" }}>
+                  ✓ {E[id].name}{E[id].maxLvl > 1 ? ` ${rom(existing[id])}` : ""}
+                </span>
+              ))}
+            </div>
+          )}
+        </Sec>
+      )}
+
+      <Sec label="02" title={`${preMode ? "ENCHANTMENTS TO ADD" : "ENCHANTMENTS"}${count ? ` — ${count} SELECTED` : ""}`}
         action={
           <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
             <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="preset name..."
@@ -336,31 +428,41 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
         {count > 0 && (
           <div style={{ marginBottom: 10 }}>
             <button onClick={() => setShowChart(c => !c)}
-              style={{
-                background: showChart ? T.accentBg : "transparent",
+              style={{ background: showChart ? T.accentBg : "transparent",
                 border: `1px solid ${showChart ? "rgba(166,110,255,.2)" : T.border}`,
                 borderRadius: 5, padding: "4px 10px", fontSize: 10,
-                color: showChart ? T.accent : T.muted,
-                cursor: "pointer", fontFamily: "'IBM Plex Mono'",
-              }}>
+                color: showChart ? T.accent : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'" }}>
               📊 {showChart ? "hide" : "show"} xp breakdown
             </button>
             {showChart && <CostChart sel={sel} />}
           </div>
         )}
-        <div>
-          <EnchantPicker item={item} sel={sel} onChange={n => { setSel(n); setResult(null); }} edition={edition} />
-        </div>
+        <EnchantPicker item={filteredItem} sel={sel}
+          onChange={n => { setSel(n); setResult(null); }} edition={edition} />
+        {preMode && filteredItem.enc.length === 0 && (
+          <div style={{ padding: "16px", textAlign: "center", fontSize: 11, color: T.muted }}>
+            No more enchantments available — item is fully enchanted.
+          </div>
+        )}
       </Sec>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <button className="go-btn" onClick={calc} disabled={!count}
-          style={{ flex: 1, padding: "13px 0", borderRadius: 8, background: count ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: count ? "#fff" : "#333", border: `1.5px solid ${count ? T.accent : T.border}`, fontFamily: "'Press Start 2P'", fontSize: 10, letterSpacing: 1, boxShadow: count ? "0 4px 20px rgba(166,110,255,.25)" : "none" }}>
+          style={{ flex: 1, padding: "13px 0", borderRadius: 8,
+            background: count ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2,
+            color: count ? "#fff" : "#333",
+            border: `1.5px solid ${count ? T.accent : T.border}`,
+            fontFamily: "'Press Start 2P'", fontSize: 10, letterSpacing: 1,
+            boxShadow: count ? "0 4px 20px rgba(166,110,255,.25)" : "none" }}>
           {count ? "⚒  CALCULATE OPTIMAL ORDER" : "SELECT ENCHANTMENTS FIRST"}
         </button>
         {count > 0 && (
           <button className="copy-btn" onClick={handleShare}
-            style={{ padding: "13px 16px", borderRadius: 8, flexShrink: 0, background: shareMsg ? "rgba(74,222,128,.1)" : "rgba(255,255,255,.03)", border: `1px solid ${shareMsg ? T.green : T.border}`, color: shareMsg ? T.green : T.muted, fontSize: 11, fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap", cursor: "pointer" }}>
+            style={{ padding: "13px 16px", borderRadius: 8, flexShrink: 0,
+              background: shareMsg ? "rgba(74,222,128,.1)" : "rgba(255,255,255,.03)",
+              border: `1px solid ${shareMsg ? T.green : T.border}`,
+              color: shareMsg ? T.green : T.muted,
+              fontSize: 11, fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap", cursor: "pointer" }}>
             {shareMsg || "🔗 share"}
           </button>
         )}
@@ -369,9 +471,19 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
       {result && (
         <Sec label="03" title="OPTIMAL COMBINING ORDER">
           <div ref={resultsRef} />
+          {preMode && existingKeys.length > 0 && (
+            <div style={{ marginBottom: 10, padding: "7px 11px",
+              background: "rgba(245,196,0,.05)", border: "1px solid rgba(245,196,0,.15)",
+              borderRadius: 5, fontSize: 10, color: "#b89020", lineHeight: 1.7 }}>
+              Item already has: {existingKeys.map(id =>
+                `${E[id].name}${E[id].maxLvl > 1 ? ` ${rom(existing[id])}` : ""}`).join(", ")}
+              {itemWC > 0 && <span> · Prior work penalty: +{Math.pow(2, itemWC) - 1} lvls on final step</span>}
+            </div>
+          )}
           <ResultSteps result={result} item={item} compact={false} />
-          <div style={{ marginTop: 10, padding: "8px 12px", background: T.s2, border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 10, color: T.muted, lineHeight: 1.8 }}>
-            💡 All books and item assumed to have <strong style={{ color: T.muted2 }}>zero work penalty</strong>. For best results, use max-level books from librarian trades.
+          <div style={{ marginTop: 10, padding: "8px 12px", background: T.s2,
+            border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 10, color: T.muted, lineHeight: 1.8 }}>
+            💡 All books assumed to have <strong style={{ color: T.muted2 }}>zero prior work</strong>. For best results, use max-level books from librarian trades.
           </div>
         </Sec>
       )}
