@@ -22,9 +22,16 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
+    version: "1.8.0",
+    date: "2026-03-09",
+    label: "latest",
+    entries: [
+      { tag: "fix", text: "Critical algorithm fix — the solver previously forced all books to be merged into one mega-book before applying to the item (always treating the item as the final step). The item is now a first-class participant in the DP tree and can receive books at any intermediate stage. This matches real Minecraft mechanics and produces significantly cheaper results — e.g. a 4-enchant pickaxe dropped from 37 levels to 23 levels." },
+    ]
+  },
+  {
     version: "1.7.0",
     date: "2026-03-07",
-    label: "latest",
     entries: [
       { tag: "new",      text: "Support tab — send bug reports, feature requests, or wrong-data corrections directly to the developer's inbox. Completely free via Web3Forms (no backend, no credit card)." },
       { tag: "new",      text: "Online / offline detection — the support form shows a live connection indicator. Going offline triggers an instant warning toast. A background poll (every 8s) detects reconnection and fires a 'back online' toast, re-enabling the form automatically." },
@@ -132,7 +139,7 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("1.7.0");
+  const [expanded, setExpanded] = useState("1.8.0");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>

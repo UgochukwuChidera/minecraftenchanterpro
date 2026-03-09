@@ -3,7 +3,7 @@
 // Usage: import VersionBadge from "./VersionBadge";
 //        <VersionBadge />  or  <VersionBadge onClick={() => setTab("changelog")} />
 
-export const APP_VERSION = "1.7.0";
+export const APP_VERSION = "1.8.0";
 
 export default function VersionBadge({ onClick }) {
   return (

@@ -9,82 +9,124 @@ let _uid = 0;
 const nid = () => ++_uid;
 
 /**
- * Finds the optimal anvil book-combination order using full bitmask DP.
- * Tries every possible binary merge tree (both left/right slot orientations).
+ * Full bitmask DP over (tool + all books).
  *
- * Cost of a single anvil step = pen(tgt.wc) + pen(sac.wc) + ecost(sac)
- * The LEFT slot (target) enchantments are NOT paid — only the RIGHT (sacrifice).
- * Algorithm always picks the orientation that minimises each step's cost.
+ * FIX: The tool is now a first-class participant in the merge tree, not just
+ * a final receiver. This matches actual Minecraft mechanics — you can apply
+ * individual books to the item at any stage, not just at the end.
  *
- * @param selected  { enchId: level } — enchantments to ADD
- * @param itemName  display name
- * @param itemWC    prior-work count of the item itself (0 = brand new, 1 = one prior anvil use, etc.)
- *                  Affects the cost of the FINAL step where the book is applied to the item.
+ * Rules:
+ *   - The tool must ALWAYS be in the LEFT (target) slot when it participates
+ *     in a merge (Minecraft doesn't let you sacrifice the item).
+ *   - Books can go in either slot when merging with each other.
+ *   - Tool starts at itemWC prior anvil uses (for pre-enchanted mode).
+ *
+ * Bitmask layout:
+ *   bit 0 (value 1) = tool
+ *   bit i+1         = book for enchantment i
  */
 export function solve(selected, itemName, itemWC = 0) {
   const ids = Object.keys(selected);
   if (!ids.length) return null;
   const n = ids.length;
-  const full = (1 << n) - 1;
-  const dp = new Array(1 << n).fill(null);
+  const TOOL_BIT = 1;
+  const full = (1 << (n + 1)) - 1;
+  const dp = new Array(full + 1).fill(null);
 
-  // Seed: each individual enchantment starts as a fresh book (wc=0)
+  // Seed: tool (bit 0)
+  dp[TOOL_BIT] = {
+    nid: nid(), wc: itemWC, cost: 0, ench: {},
+    label: itemName, isItem: true, steps: []
+  };
+  // Seed: books (bits 1..n)
   for (let i = 0; i < n; i++) {
     const id = ids[i];
-    dp[1 << i] = {
+    dp[1 << (i + 1)] = {
       nid: nid(), wc: 0, cost: 0, ench: { [id]: selected[id] },
-      label: `${E[id].name} ${rom(selected[id])} Book`, steps: []
+      label: `${E[id].name} ${rom(selected[id])} Book`,
+      isItem: false, steps: []
     };
   }
 
-  // Build optimal merge tree bottom-up over all subsets
   for (let mask = 1; mask <= full; mask++) {
-    if (!(mask & (mask - 1))) continue;   // skip single-bit masks (leaves)
+    if (!(mask & (mask - 1))) continue; // skip single-item masks (leaves)
+    const maskHasTool = !!(mask & TOOL_BIT);
     let best = null;
+
     for (let sub = (mask - 1) & mask; sub > 0; sub = (sub - 1) & mask) {
       const comp = mask ^ sub;
-      if (!comp || sub > comp) continue;  // avoid double-counting
-      const a = dp[sub], b = dp[comp];
-      if (!a || !b) continue;
-      // Try both orientations — LEFT is target (not paid), RIGHT is sacrifice (paid)
-      for (const [tgt, sac] of [[a, b], [b, a]]) {
-        const ec = ecost(sac.ench);
-        const sc = pen(tgt.wc) + pen(sac.wc) + ec;
-        const tc = tgt.cost + sac.cost + sc;
-        const wc = Math.max(tgt.wc, sac.wc) + 1;
-        if (!best || tc < best.cost) {
-          const id = nid();
+      if (!comp) continue;
+
+      if (maskHasTool) {
+        // Tool must be on the LEFT — only process when sub contains the tool
+        if (!(sub & TOOL_BIT)) continue;
+        // (comp never has tool since tool bit is unique and sub already has it)
+
+        const tgt = dp[sub], sac = dp[comp];
+        if (!tgt || !sac) continue;
+
+        const ec  = ecost(sac.ench);
+        const sc  = pen(tgt.wc) + pen(sac.wc) + ec;
+        const tc  = tgt.cost + sac.cost + sc;
+        const wc  = Math.max(tgt.wc, sac.wc) + 1;
+
+        if (!best || tc < best.cost || (tc === best.cost && wc < best.wc)) {
+          const rid = nid();
+          const newEnch = { ...tgt.ench, ...sac.ench };
+          const enchStr = Object.entries(newEnch)
+            .map(([i, l]) => `${E[i].name}${E[i].maxLvl > 1 ? " " + rom(l) : ""}`)
+            .join(", ");
           best = {
-            nid: id, wc, cost: tc, ench: { ...tgt.ench, ...sac.ench },
-            label: Object.entries({ ...tgt.ench, ...sac.ench })
-              .map(([i, l]) => `${E[i].name} ${rom(l)}`).join(", "),
-            steps: [...tgt.steps, ...sac.steps, { tgt, sac, sc, ec, resultNid: id }]
+            nid: rid, wc, cost: tc, ench: newEnch,
+            label: enchStr ? `${itemName} (${enchStr})` : itemName,
+            isItem: true,
+            steps: [...tgt.steps, ...sac.steps, { tgt, sac, sc, ec, resultNid: rid, isItemStep: true }]
           };
+        }
+      } else {
+        // Book-only merge — try both orientations, skip duplicate pairs
+        if (sub > comp) continue;
+        const a = dp[sub], b = dp[comp];
+        if (!a || !b) continue;
+
+        for (const [tgt, sac] of [[a, b], [b, a]]) {
+          const ec  = ecost(sac.ench);
+          const sc  = pen(tgt.wc) + pen(sac.wc) + ec;
+          const tc  = tgt.cost + sac.cost + sc;
+          const wc  = Math.max(tgt.wc, sac.wc) + 1;
+          if (!best || tc < best.cost || (tc === best.cost && wc < best.wc)) {
+            const rid = nid();
+            best = {
+              nid: rid, wc, cost: tc, ench: { ...tgt.ench, ...sac.ench },
+              label: Object.entries({ ...tgt.ench, ...sac.ench })
+                .map(([i, l]) => `${E[i].name} ${rom(l)}`).join(", "),
+              isItem: false,
+              steps: [...tgt.steps, ...sac.steps, { tgt, sac, sc, ec, resultNid: rid, isItemStep: false }]
+            };
+          }
         }
       }
     }
     dp[mask] = best;
   }
 
-  const book = dp[full];
-  if (!book) return null;
+  const finalNode = dp[full];
+  if (!finalNode) return null;
 
-  // Final step: item (left, uses itemWC as its penalty) + combined book (right)
-  const ec = ecost(book.ench);
-  const sc = pen(itemWC) + pen(book.wc) + ec;
-  const total = book.cost + sc;
-  const itemNode = { nid: nid(), label: itemName };
-  const allSteps = [...book.steps, { tgt: itemNode, sac: book, sc, ec, resultNid: nid(), isFinal: true }];
-
+  const allSteps = finalNode.steps;
   const nidMap = {};
   const steps = allSteps.map((step, i) => {
     nidMap[step.resultNid] = i + 1;
     const tl = nidMap[step.tgt.nid] ? `Step ${nidMap[step.tgt.nid]} result` : step.tgt.label;
     const sl = nidMap[step.sac.nid] ? `Step ${nidMap[step.sac.nid]} result` : step.sac.label;
-    return { num: i + 1, tl, sl, sc: step.sc, isFinal: !!step.isFinal };
+    return {
+      num: i + 1, tl, sl, sc: step.sc,
+      isFinal:     i === allSteps.length - 1,
+      isItemStep:  step.isItemStep,
+    };
   });
 
-  return { steps, total, tooExpensive: steps.some(s => s.sc > 39) };
+  return { steps, total: finalNode.cost, tooExpensive: steps.some(s => s.sc > 39) };
 }
 
 export function parseShareURL() {
@@ -119,7 +161,7 @@ export function exportSteps(result, itemName, existingEnch = {}) {
     "",
     ...(preNote ? [preNote] : []),
     ...result.steps.map(s =>
-      `Step ${s.num}: [LEFT] ${s.tl}  +  [RIGHT] ${s.sl}  →  ${s.isFinal ? `✨ ${itemName}` : "combined book"}  (${s.sc} lvls)`
+      `Step ${s.num}: [LEFT] ${s.tl}  +  [RIGHT] ${s.sl}  →  ${s.isFinal ? `✨ ${itemName}` : s.isItemStep ? `⚒ ${itemName}` : "combined book"}  (${s.sc} lvls)`
     ),
     "",
     result.tooExpensive

@@ -8,8 +8,8 @@
 // ═══════════════════════════════════════════════════════════
 import { useState, useEffect, useRef, useCallback } from "react";
 import { T } from "./theme.js";
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
 
+const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY"; // ← paste your key here
 const POLL_INTERVAL = 8000; // ms between online checks when offline
 
 // ── Toast ─────────────────────────────────────────────────
