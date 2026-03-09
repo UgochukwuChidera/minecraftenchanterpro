@@ -22,9 +22,16 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
-    version: "1.8.0",
+    version: "1.8.1",
     date: "2026-03-09",
     label: "latest",
+    entries: [
+      { tag: "new", text: "Prior work penalty breakdown — each step now shows a subtle dim line below the cost badge indicating how many levels were added by prior-work penalties on the target and sacrifice. Only shown when non-zero. Hover for tooltip." },
+    ]
+  },
+  {
+    version: "1.8.0",
+    date: "2026-03-09",
     entries: [
       { tag: "fix", text: "Critical algorithm fix — the solver previously forced all books to be merged into one mega-book before applying to the item (always treating the item as the final step). The item is now a first-class participant in the DP tree and can receive books at any intermediate stage. This matches real Minecraft mechanics and produces significantly cheaper results — e.g. a 4-enchant pickaxe dropped from 37 levels to 23 levels." },
     ]
@@ -139,7 +146,7 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("1.8.0");
+  const [expanded, setExpanded] = useState("1.8.1");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>

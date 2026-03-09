@@ -121,8 +121,11 @@ export function solve(selected, itemName, itemWC = 0) {
     const sl = nidMap[step.sac.nid] ? `Step ${nidMap[step.sac.nid]} result` : step.sac.label;
     return {
       num: i + 1, tl, sl, sc: step.sc,
-      isFinal:     i === allSteps.length - 1,
-      isItemStep:  step.isItemStep,
+      penTgt: pen(step.tgt.wc),
+      penSac: pen(step.sac.wc),
+      ec:     step.ec,
+      isFinal:    i === allSteps.length - 1,
+      isItemStep: step.isItemStep,
     };
   });
 

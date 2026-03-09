@@ -219,7 +219,14 @@ function ResultSteps({ result, item, compact }) {
                 <span style={{ color: "#2a2a2a" }}>→</span>
                 <span style={{ color: step.isFinal ? "#c4a3ff" : T.muted, fontStyle: step.isFinal ? "italic" : "normal" }}>{step.isFinal ? `✨ ${item.name}` : "combined book"}</span>
               </div>
-              <div style={{ background: step.sc > 39 ? "#2d0707" : "#1a1300", border: `1px solid ${step.sc > 39 ? "#7f1d1d" : "#3d3300"}`, borderRadius: 5, padding: "3px 8px", flexShrink: 0, fontFamily: "'Press Start 2P'", fontSize: 8, color: step.sc > 39 ? T.red : T.yellow }}>{step.sc} lvls</div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
+                <div style={{ background: step.sc > 39 ? "#2d0707" : "#1a1300", border: `1px solid ${step.sc > 39 ? "#7f1d1d" : "#3d3300"}`, borderRadius: 5, padding: "3px 8px", fontFamily: "'Press Start 2P'", fontSize: 8, color: step.sc > 39 ? T.red : T.yellow }}>{step.sc} lvls</div>
+                {(step.penTgt > 0 || step.penSac > 0) && (
+                  <div style={{ fontSize: 9, color: "#2d2d2d", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }} title="Prior work penalties included in step cost">
+                    {[step.penTgt > 0 && `⚠ ${step.penTgt}`, step.penSac > 0 && `⚠ ${step.penSac}`].filter(Boolean).join(" + ")} prior
+                  </div>
+                )}
+              </div>
             </div>
           ))}
           {result.tooExpensive && (
