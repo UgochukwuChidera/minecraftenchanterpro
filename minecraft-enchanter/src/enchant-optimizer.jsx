@@ -152,7 +152,7 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
                 <span style={{ flex: 1, fontSize: 12, color: curse ? T.red : active ? "#d4baff" : T.muted2 }}>
                   {enc.name}
                   {curse && <span style={{ fontSize: 9, color: T.red, marginLeft: 4, opacity: .8 }}>CURSE</span>}
-                  {enc.javaOnly && <span style={{ fontSize: 8, color: T.java, marginLeft: 5, opacity: .7, fontFamily: "'Press Start 2P'" }}>J</span>}
+                  {enc.javaOnly && <span title="Java Edition only — this enchantment does not exist in Bedrock Edition" style={{ fontSize: 7, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: "'Press Start 2P'", opacity: .8, cursor: "help" }}>JAVA</span>}
                 </span>
                 <button className="icon-btn" onClick={e => { e.stopPropagation(); setOpenWiki(wikiOpen ? null : id); }}
                   style={{ fontSize: 11, color: wikiOpen ? T.accent : "#333", padding: "0 4px", lineHeight: 1, fontFamily: "'IBM Plex Mono'" }}>ⓘ</button>

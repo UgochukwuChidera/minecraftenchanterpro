@@ -203,13 +203,13 @@ export default function Support() {
       {/* ── Name + Email row ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
         <div>
-          <label style={labelStyle}>NAME <span style={{ color: T.red }}>*</span></label>
+          <label style={labelStyle}>NAME <span title="You must fill this in before sending" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
           <input value={form.name} onChange={e => set("name", e.target.value)}
             placeholder="Your name or handle" maxLength={60}
             style={inputStyle} />
         </div>
         <div>
-          <label style={labelStyle}>EMAIL <span style={{ color: T.muted, fontSize: 9 }}>(optional — for replies)</span></label>
+          <label style={labelStyle}>EMAIL <span title="Not required — only fill this in if you want a reply" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>optional</span></label>
           <input value={form.email} onChange={e => set("email", e.target.value)}
             placeholder="you@example.com" type="email" maxLength={120}
             style={inputStyle} />
@@ -218,7 +218,7 @@ export default function Support() {
 
       {/* ── Message ── */}
       <div style={{ marginBottom: 18 }}>
-        <label style={labelStyle}>MESSAGE <span style={{ color: T.red }}>*</span></label>
+        <label style={labelStyle}>MESSAGE <span title="You must fill this in before sending" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
         <textarea value={form.message} onChange={e => set("message", e.target.value)}
           placeholder={PLACEHOLDERS[form.type]}
           maxLength={2000} rows={6}
