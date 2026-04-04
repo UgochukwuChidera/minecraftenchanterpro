@@ -8,6 +8,7 @@ import HowToUse from "./HowToUse.jsx";
 import Changelog from "./Changelog.jsx";
 import Support from "./Support.jsx";
 import VersionBadge from "./VersionBadge.jsx";
+import Wiki from "./Wiki.jsx";
 
 const RECENT_KEY = "mc_recent";
 
@@ -736,6 +737,7 @@ export default function App() {
     { id: "presets",   label: `💾 PRESETS${presets.length ? ` (${presets.length})` : ""}` },
     { id: "materials", label: "⛏️ MATERIALS" },
     { id: "guide",     label: "📖 GUIDE" },
+    { id: "wiki",      label: "📚 WIKI" },
     { id: "changelog", label: "📋 CHANGELOG" },
     { id: "support",   label: "💬 SUPPORT" },
   ];
@@ -780,6 +782,7 @@ export default function App() {
           {tab === "presets"   && <PresetsPanel presets={presets} onDelete={deletePreset} onLoad={loadPreset} />}
           {tab === "materials" && <MaterialCalc E={E} ITEMS={ITEMS} rom={rom} />}
           {tab === "guide"     && <HowToUse />}
+          {tab === "wiki"      && <Wiki />}
           {tab === "changelog" && <Changelog />}
           {tab === "support"   && <Support />}
         </div>
