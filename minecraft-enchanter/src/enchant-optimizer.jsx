@@ -192,10 +192,17 @@ function ResultSteps({ result, item, compact }) {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#0a0a0a", border: `1px solid ${T.border}`, borderRadius: 7, padding: "9px 12px", marginBottom: collapsed ? 0 : 10, cursor: compact ? "pointer" : "default" }}
         onClick={() => compact && setCollapsed(c => !c)}>
-        <span style={{ fontSize: 11, color: T.muted }}>
-          {result.steps.length} step{result.steps.length !== 1 ? "s" : ""}
-          {compact && (collapsed ? " — click to expand" : " — click to collapse")}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 11, color: T.muted }}>
+            {result.steps.length} step{result.steps.length !== 1 ? "s" : ""}
+            {compact && (collapsed ? " — click to expand" : " — click to collapse")}
+          </span>
+          {result.timeMs !== undefined && (
+            <span style={{ fontSize: 9, color: T.muted2, fontFamily: "'IBM Plex Mono'", background: T.s3, padding: "2px 6px", borderRadius: 4, border: `1px solid ${T.border}` }} title="Calculation time">
+              ⏱ {result.timeMs < 1 ? "<1" : result.timeMs.toFixed(0)}ms
+            </span>
+          )}
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {!compact && (
             <button className="copy-btn" onClick={handleExport}
@@ -348,7 +355,10 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
 
   const calc = useCallback(() => {
     if (!count) return;
-    setResult(solve(sel, item.name, preMode ? itemWC : 0));
+    const t0 = performance.now();
+    const res = solve(sel, item.name, preMode ? itemWC : 0);
+    res.timeMs = performance.now() - t0;
+    setResult(res);
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   }, [sel, item, count, preMode, itemWC]);
 
@@ -549,7 +559,7 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
 
   const calcAll = () => {
     const r = {};
-    entries.forEach(e => { if (Object.keys(e.sel).length) { const item = ITEMS.find(i => i.id === e.itemId); r[e.uid] = solve(e.sel, item.name); } });
+    entries.forEach(e => { if (Object.keys(e.sel).length) { const item = ITEMS.find(i => i.id === e.itemId); const t0 = performance.now(); const res = solve(e.sel, item.name); res.timeMs = performance.now() - t0; r[e.uid] = res; } });
     setResults(r);
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   };
@@ -624,8 +634,8 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
   const isOpen = expanded === p.id;
   const viewResults = useMemo(() => {
     if (!isOpen) return null;
-    if (p.type === "single") { const item = ITEMS.find(i => i.id === p.itemId); return [{ item, sel: p.sel, result: solve(p.sel, item.name), qty: 1 }]; }
-    return p.entries.map(e => { const item = ITEMS.find(i => i.id === e.itemId); return { item, sel: e.sel, result: solve(e.sel, item.name), qty: e.qty }; }).filter(e => Object.keys(e.sel).length > 0);
+    if (p.type === "single") { const item = ITEMS.find(i => i.id === p.itemId); const t0 = performance.now(); const res = solve(p.sel, item.name); res.timeMs = performance.now() - t0; return [{ item, sel: p.sel, result: res, qty: 1 }]; }
+    return p.entries.map(e => { const item = ITEMS.find(i => i.id === e.itemId); const t0 = performance.now(); const res = solve(e.sel, item.name); res.timeMs = performance.now() - t0; return { item, sel: e.sel, result: res, qty: e.qty }; }).filter(e => Object.keys(e.sel).length > 0);
   }, [isOpen, p]);
   const totalXp = viewResults?.reduce((s, r) => s + (r.result?.total || 0) * r.qty, 0) ?? 0;
 
