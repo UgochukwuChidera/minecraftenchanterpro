@@ -33,7 +33,8 @@ const CHANGELOG = [
     version: "1.8.0",
     date: "2026-03-09",
     entries: [
-      { tag: "fix", text: "Critical algorithm fix — the solver previously forced all books to be merged into one mega-book before applying to the item (always treating the item as the final step). The item is now a first-class participant in the DP tree and can receive books at any intermediate stage. This matches real Minecraft mechanics and produces significantly cheaper results — e.g. a 4-enchant pickaxe dropped from 37 levels to 23 levels." },
+      { tag: "fix",      text: "Critical algorithm fix — the solver previously forced all books to be merged into one mega-book before applying to the item (always treating the item as the final step). The item is now a first-class participant in the DP tree and can receive books at any intermediate stage. This matches real Minecraft mechanics and produces significantly cheaper results — e.g. a 4-enchant pickaxe dropped from 37 levels to 23 levels." },
+      { tag: "improved", text: "Guide fully rewritten — 9 sections covering the corrected algorithm (with the cost formula table), reading the results, pre-enchanted mode walkthrough, all tabs, keyboard shortcuts, share/export features, and 8 pro tips. The old incorrect 'combine all books first' explanation has been removed." },
     ]
   },
   {
