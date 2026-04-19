@@ -214,7 +214,7 @@ function ResultSteps({ result, item, compact }) {
             {compact && (collapsed ? " — click to expand" : " — click to collapse")}
           </span>
           {result.timeMs !== undefined && (
-            <span style={{ fontSize: 9, color: T.muted2, fontFamily: "'IBM Plex Mono'", background: T.s3, padding: "2px 6px", borderRadius: 4, border: `1px solid ${T.border}` }} title="Calculation time">
+            <span className="tooltip-trigger" data-tooltip="Internal calculation time for finding the provably optimal combining sequence using DP. (Usually <1ms for 1-5 enchants)" style={{ fontSize: 9, color: T.muted2, fontFamily: "'IBM Plex Mono'", background: T.s3, padding: "2px 6px", borderRadius: 4, border: `1px solid ${T.border}` }}>
               ⏱ {result.timeMs < 1 ? "<1" : result.timeMs.toFixed(0)}ms
             </span>
           )}
@@ -246,7 +246,7 @@ function ResultSteps({ result, item, compact }) {
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
                 <div style={{ background: step.sc > 39 ? "#2d0707" : "#1a1300", border: `1px solid ${step.sc > 39 ? "#7f1d1d" : "#3d3300"}`, borderRadius: 5, padding: "3px 8px", fontFamily: "'Press Start 2P'", fontSize: 8, color: step.sc > 39 ? T.red : T.yellow }}>{step.sc} lvls</div>
                 {(step.penTgt > 0 || step.penSac > 0) && (
-                  <div style={{ fontSize: 9, color: "#2d2d2d", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }} title="Prior work penalties included in step cost">
+                  <div className="tooltip-trigger" data-tooltip={`Prior work penalty cost for this step:\nItem: +${step.penTgt} lvl\nSacrifice: +${step.penSac} lvl\n\nPenalties double each time an item passes through an anvil.`} style={{ fontSize: 9, color: "#2d2d2d", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>
                     {[step.penTgt > 0 && `⚠ ${step.penTgt}`, step.penSac > 0 && `⚠ ${step.penSac}`].filter(Boolean).join(" + ")} prior
                   </div>
                 )}

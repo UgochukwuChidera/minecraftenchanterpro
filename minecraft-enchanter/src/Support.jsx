@@ -203,13 +203,13 @@ export default function Support() {
       {/* ── Name + Email row ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
         <div>
-          <label style={labelStyle}>NAME <span title="You must fill this in before sending" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
+          <label style={labelStyle}>NAME <span className="tooltip-trigger" data-tooltip="You must provide a name or handle before sending so the developer knows who you are." style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
           <input value={form.name} onChange={e => set("name", e.target.value)}
             placeholder="Your name or handle" maxLength={60}
             style={inputStyle} />
         </div>
         <div>
-          <label style={labelStyle}>EMAIL <span title="Not required — only fill this in if you want a reply" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>optional</span></label>
+          <label style={labelStyle}>EMAIL <span className="tooltip-trigger" data-tooltip="Completely optional — only provide an email if you want the developer to be able to reply to your feedback." style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>optional</span></label>
           <input value={form.email} onChange={e => set("email", e.target.value)}
             placeholder="you@example.com" type="email" maxLength={120}
             style={inputStyle} />
@@ -218,7 +218,7 @@ export default function Support() {
 
       {/* ── Message ── */}
       <div style={{ marginBottom: 18 }}>
-        <label style={labelStyle}>MESSAGE <span title="You must fill this in before sending" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
+        <label style={labelStyle}>MESSAGE <span className="tooltip-trigger" data-tooltip="Please include as much detail as possible. For bugs, include what item you were using and which enchantments were selected." style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
         <textarea value={form.message} onChange={e => set("message", e.target.value)}
           placeholder={PLACEHOLDERS[form.type]}
           maxLength={2000} rows={6}
