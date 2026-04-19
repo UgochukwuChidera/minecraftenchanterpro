@@ -215,22 +215,29 @@ export default function HowToUse() {
       <style>{`
         .guide-nav-btn { transition: all .12s; cursor: pointer; }
         .guide-nav-btn:hover { background: rgba(166,110,255,.1) !important; }
+        .guide-nav { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:16px; }
+        .guide-card { background:${T.surface}; border:1px solid ${T.border}; border-radius:10px; padding:20px; }
+        @media (max-width:767px){
+          .guide-nav { overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px; }
+          .guide-nav-btn { flex:0 0 auto; min-height:40px; font-size:12px !important; }
+          .guide-card { padding:14px; }
+        }
       `}</style>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 16 }}>
+      <div className="guide-nav">
         {SECTIONS.map(s => (
           <button key={s.id} className="guide-nav-btn" onClick={() => setActive(s.id)}
             style={{
-              padding: "6px 12px", borderRadius: 6, cursor: "pointer",
+              padding: "8px 12px", borderRadius: 6, cursor: "pointer",
               background: active === s.id ? T.accentBg : T.s2,
               color: active === s.id ? T.accent : T.muted,
               border: `1px solid ${active === s.id ? "rgba(166,110,255,.3)" : T.border}`,
-              fontSize: 11, fontFamily: "'IBM Plex Mono'",
+              fontSize: 12, fontFamily: "'IBM Plex Mono'",
             }}>{s.icon} {s.title}</button>
         ))}
       </div>
 
-      <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
+      <div className="guide-card">
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16,
           paddingBottom: 12, borderBottom: `1px solid ${T.border}` }}>
           <span style={{ fontSize: 22 }}>{section.icon}</span>

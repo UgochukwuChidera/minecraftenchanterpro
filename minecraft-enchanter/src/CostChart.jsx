@@ -51,10 +51,10 @@ export default function CostChart({ sel }) {
           return (
             <div key={id}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-                <span style={{ fontSize: 11, color: T.muted2, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 12, color: T.muted2, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {name}{E[id].maxLvl > 1 ? ` ${rom(lvl)}` : ""}
                 </span>
-                <span style={{ fontSize: 9, color: T.muted, minWidth: 52, textAlign: "right" }}>
+                <span style={{ fontSize: 10, color: T.muted, minWidth: 52, textAlign: "right" }}>
                   ×{mult}{E[id].maxLvl > 1 ? `×${lvl}` : ""} = {cost}
                 </span>
                 <span style={{ fontSize: 9, color, fontFamily: "'Press Start 2P'", minWidth: 32, textAlign: "right" }}>

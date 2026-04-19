@@ -12,11 +12,11 @@ export default function VersionBadge({ onClick }) {
       title={`v${APP_VERSION} — click to see changelog`}
       style={{
         fontFamily: "'Press Start 2P', monospace",
-        fontSize: 7,
+        fontSize: 9,
         color: "#333",
         border: "1px solid #1e1e1e",
         borderRadius: 4,
-        padding: "3px 6px",
+        padding: "6px 8px",
         cursor: onClick ? "pointer" : "default",
         userSelect: "none",
         transition: "color .15s, border-color .15s",

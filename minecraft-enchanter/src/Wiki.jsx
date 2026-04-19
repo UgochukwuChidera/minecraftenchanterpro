@@ -65,6 +65,15 @@ export default function Wiki() {
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+      <style>{`
+        .wiki-search-row{display:flex;gap:10px;margin-bottom:16px}
+        .wiki-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px}
+        .wiki-card-meta{display:flex;gap:10px;font-size:10px;color:${T.muted2};flex-wrap:wrap}
+        @media (max-width:767px){
+          .wiki-search-row{flex-direction:column}
+          .wiki-card-head{flex-direction:column;align-items:flex-start}
+        }
+      `}</style>
       <div style={{ marginBottom: 20, padding: "14px 18px", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10 }}>
         <div style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: T.accent, marginBottom: 8 }}>
           ENCHANTMENT SYSTEM WIKI
@@ -94,17 +103,17 @@ export default function Wiki() {
       </div>
 
       {/* Search and Filter */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+      <div className="wiki-search-row">
         <input 
           value={search} 
           onChange={e => setSearch(e.target.value)} 
           placeholder="🔍 Search enchantments..."
-          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} 
+          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 14px", fontSize: 13, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} 
         />
         <select 
           value={activeGroup} 
           onChange={e => setActiveGroup(e.target.value)}
-          style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", color: T.text, fontSize: 11, fontFamily: "'IBM Plex Mono'", outline: "none", cursor: "pointer" }}
+          style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "12px 14px", color: T.text, fontSize: 12, fontFamily: "'IBM Plex Mono'", outline: "none", cursor: "pointer" }}
         >
           <option value="all">All Groups</option>
           {ENCHANT_GROUPS.map(g => (
@@ -131,13 +140,13 @@ export default function Wiki() {
                 const enc = E[id];
                 return (
                   <div key={id} style={{ background: T.s2, border: `1px solid ${T.border}`, borderRadius: 8, padding: "14px 16px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, gap: 10 }}>
+                    <div className="wiki-card-head">
                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                         <span style={{ fontSize: 14, color: T.text, fontWeight: "bold" }}>{enc.name}</span>
                         {enc.javaOnly && <span style={{ fontSize: 7, color: T.java || "#ed8b00", padding: "2px 6px", border: `1px solid ${T.java || "#ed8b00"}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}>JAVA ONLY</span>}
                         {id.startsWith("curse") && <span style={{ fontSize: 7, color: T.red, padding: "2px 6px", border: `1px solid ${T.red}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}>CURSE</span>}
                       </div>
-                      <div style={{ display: "flex", gap: 10, fontSize: 10, color: T.muted2 }}>
+                      <div className="wiki-card-meta">
                         <span>Max Lvl: <span style={{ color: "#d4baff" }}>{enc.maxLvl}</span></span>
                         <span>Mult: <span style={{ color: T.orange }}>&times;{enc.mult}</span></span>
                       </div>

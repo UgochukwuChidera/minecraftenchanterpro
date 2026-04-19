@@ -168,6 +168,12 @@ export default function Changelog() {
       <style>{`
         .cl-card { transition: border-color .15s; }
         .cl-card:hover { border-color: rgba(166,110,255,.3) !important; }
+        .cl-head { display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer; user-select:none; flex-wrap:wrap; }
+        .cl-meta { margin-left:auto; display:flex; align-items:center; gap:10px; }
+        @media (max-width:767px){
+          .cl-head { gap:8px; }
+          .cl-meta { margin-left:0; width:100%; justify-content:space-between; }
+        }
       `}</style>
 
       <div style={{
@@ -194,11 +200,7 @@ export default function Changelog() {
                 background: T.surface, border: `1px solid ${isOpen ? T.accent : T.border}`,
                 borderRadius: 10, overflow: "hidden"
               }}>
-              <div onClick={() => setExpanded(isOpen ? null : release.version)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 12, padding: "13px 16px",
-                  cursor: "pointer", userSelect: "none"
-                }}>
+              <div className="cl-head" onClick={() => setExpanded(isOpen ? null : release.version)}>
                 <div style={{
                   fontFamily: "'Press Start 2P'", fontSize: 10,
                   color: isOpen ? T.accent : T.muted2, minWidth: 60
@@ -213,11 +215,12 @@ export default function Changelog() {
                     color: T.green, fontFamily: "'Press Start 2P'"
                   }}>LATEST</span>
                 )}
-                <div style={{ flex: 1 }} />
-                <span style={{ fontSize: 10, color: T.muted }}>
-                  {release.entries.length} change{release.entries.length !== 1 ? "s" : ""}
-                </span>
-                <span style={{ color: T.muted, fontSize: 12 }}>{isOpen ? "▲" : "▼"}</span>
+                <div className="cl-meta">
+                  <span style={{ fontSize: 10, color: T.muted }}>
+                    {release.entries.length} change{release.entries.length !== 1 ? "s" : ""}
+                  </span>
+                  <span style={{ color: T.muted, fontSize: 12 }}>{isOpen ? "▲" : "▼"}</span>
+                </div>
               </div>
               {isOpen && (
                 <div style={{

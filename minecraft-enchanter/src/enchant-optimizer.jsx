@@ -31,11 +31,11 @@ function pushRecent(itemId) {
 
 function Sec({ label, title, children, action }) {
   return (
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18, marginBottom: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+    <div className="section-card">
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
         {label && <span style={{ fontFamily: "'Press Start 2P'", fontSize: 7, color: "#333" }}>{label}</span>}
         <div style={{ flex: 1, height: 1, background: T.border }} />
-        <span style={{ fontFamily: "'Press Start 2P'", fontSize: 8, color: T.accent }}>{title}</span>
+        <span style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: T.accent, lineHeight: 1.5 }}>{title}</span>
         {action}
       </div>
       {children}
@@ -52,7 +52,7 @@ function EditionToggle({ edition, onChange }) {
       ].map(opt => (
         <button key={opt.id} className="edition-btn" onClick={() => onChange(opt.id)}
           style={{
-            padding: "5px 12px", borderRadius: 4, fontSize: 10, cursor: "pointer",
+            padding: "9px 12px", borderRadius: 4, fontSize: 12, cursor: "pointer", minHeight: 40,
             fontFamily: "'IBM Plex Mono'",
             background: edition === opt.id ? `${opt.color}18` : "transparent",
             color: edition === opt.id ? opt.color : T.muted,
@@ -98,7 +98,7 @@ function WikiPanel({ id, edition }) {
   );
 }
 
-function EnchantPicker({ item, sel, onChange, edition, tint }) {
+function EnchantPicker({ item, sel, onChange, edition }) {
   const [openWiki, setOpenWiki] = useState(null);
   const [search, setSearch] = useState("");
 
@@ -128,7 +128,7 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
       {item.enc.length >= 6 && (
         <div style={{ marginBottom: 8, position: "relative" }}>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 filter enchants..."
-            style={{ width: "100%", background: T.s3, border: `1px solid ${T.border}`, borderRadius: 6, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} />
+            style={{ width: "100%", background: T.s3, border: `1px solid ${T.border}`, borderRadius: 6, padding: "10px 12px", fontSize: 13, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} />
           {search && (
             <button onClick={() => setSearch("")}
               style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 13 }}>✕</button>
@@ -148,24 +148,28 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
           return (
             <div key={id}>
               <div className={`erow${blocked ? " blocked" : ""}`} onClick={() => !blocked && toggle(id)}
-                style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 8px", borderRadius: 6, background: active ? T.accentBg : "transparent", border: `1px solid ${active ? "rgba(166,110,255,0.15)" : "transparent"}`, opacity: blocked ? 0.25 : 1 }}>
-                <div style={{ width: 16, height: 16, borderRadius: 3, flexShrink: 0, border: `1.5px solid ${active ? T.accent : "#333"}`, background: active ? T.accent : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff" }}>{active && "✓"}</div>
-                <span style={{ flex: 1, fontSize: 12, color: curse ? T.red : active ? "#d4baff" : T.muted2 }}>
-                  {enc.name}
-                  {curse && <span style={{ fontSize: 9, color: T.red, marginLeft: 4, opacity: .8 }}>CURSE</span>}
-                  {enc.javaOnly && <span title="Java Edition only — this enchantment does not exist in Bedrock Edition" style={{ fontSize: 7, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: "'Press Start 2P'", opacity: .8, cursor: "help" }}>JAVA</span>}
-                </span>
-                <button className="icon-btn" onClick={e => { e.stopPropagation(); setOpenWiki(wikiOpen ? null : id); }}
-                  style={{ fontSize: 11, color: wikiOpen ? T.accent : "#333", padding: "0 4px", lineHeight: 1, fontFamily: "'IBM Plex Mono'" }}>ⓘ</button>
-                <span style={{ fontSize: 10, color: "#2a2a2a", minWidth: 38, textAlign: "right" }}>×{enc.mult}</span>
-                {enc.maxLvl > 1 && (
-                  <div style={{ display: "flex", gap: 3 }} onClick={e => e.stopPropagation()}>
-                    {Array.from({ length: enc.maxLvl }, (_, i) => i + 1).map(lvl => (
-                      <button key={lvl} className="lvbtn" onClick={() => { if (!active) toggle(id); setLvl(id, lvl); }}
-                        style={{ width: 24, height: 22, borderRadius: 4, fontSize: 8, fontFamily: "'Press Start 2P'", background: (active && sel[id] === lvl) ? T.accent : "#1a1a1a", color: (active && sel[id] === lvl) ? "#fff" : "#444" }}>{rom(lvl)}</button>
-                    ))}
+                style={{ padding: "10px 8px", borderRadius: 6, background: active ? T.accentBg : "transparent", border: `1px solid ${active ? "rgba(166,110,255,0.15)" : "transparent"}`, opacity: blocked ? 0.25 : 1 }}>
+                <div className="enchant-row-main">
+                  <div style={{ width: 18, height: 18, borderRadius: 3, flexShrink: 0, border: `1.5px solid ${active ? T.accent : "#333"}`, background: active ? T.accent : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff" }}>{active && "✓"}</div>
+                  <span style={{ flex: 1, minWidth: 0, fontSize: 13, color: curse ? T.red : active ? "#d4baff" : T.muted2, lineHeight: 1.35 }}>
+                    {enc.name}
+                    {curse && <span style={{ fontSize: 10, color: T.red, marginLeft: 4, opacity: .8 }}>CURSE</span>}
+                    {enc.javaOnly && <span title="Java Edition only — this enchantment does not exist in Bedrock Edition" style={{ fontSize: 8, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: "'Press Start 2P'", opacity: .8, cursor: "help" }}>JAVA</span>}
+                  </span>
+                  <div className="enchant-row-meta">
+                    <button className="icon-btn" onClick={e => { e.stopPropagation(); setOpenWiki(wikiOpen ? null : id); }}
+                      style={{ fontSize: 13, color: wikiOpen ? T.accent : "#333", padding: "4px 6px", lineHeight: 1, fontFamily: "'IBM Plex Mono'", minHeight: 30 }}>ⓘ</button>
+                    <span style={{ fontSize: 11, color: "#2a2a2a", minWidth: 30, textAlign: "right" }}>×{enc.mult}</span>
+                    {enc.maxLvl > 1 && (
+                      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }} onClick={e => e.stopPropagation()}>
+                        {Array.from({ length: enc.maxLvl }, (_, i) => i + 1).map(lvl => (
+                          <button key={lvl} className="lvbtn" onClick={() => { if (!active) toggle(id); setLvl(id, lvl); }}
+                            style={{ width: 30, height: 30, borderRadius: 4, fontSize: 9, fontFamily: "'Press Start 2P'", background: (active && sel[id] === lvl) ? T.accent : "#1a1a1a", color: (active && sel[id] === lvl) ? "#fff" : "#444" }}>{rom(lvl)}</button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
               {wikiOpen && <WikiPanel id={id} edition={edition} />}
             </div>
@@ -282,7 +286,7 @@ function ItemGrid({ value, onChange }) {
         </div>
       )}
       <div style={{ fontSize: 9, color: T.muted, fontFamily: "'Press Start 2P'", marginBottom: 8 }}>ALL ITEMS</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(72px,1fr))", gap: 6 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(84px,1fr))", gap: 8 }}>
         {ITEMS.map(it => (
           <div key={it.id} className="item-btn" onClick={() => handlePick(it.id)}
             style={{ background: value === it.id ? "#160e28" : T.s2, border: `1.5px solid ${value === it.id ? T.accent : T.border}`, borderRadius: 7, padding: "8px 4px", textAlign: "center", boxShadow: value === it.id ? "0 0 12px rgba(166,110,255,.2)" : "none" }}>
@@ -291,7 +295,7 @@ function ItemGrid({ value, onChange }) {
                 ? <img src={it.icon} alt={it.name} style={{ width: 26, height: 26, objectFit: "contain", imageRendering: "crisp-edges" }} />
                 : it.em}
             </div>
-            <div style={{ marginTop: 4, fontSize: 7, color: value === it.id ? "#c4a3ff" : "#555", fontFamily: "'Press Start 2P'", lineHeight: 1.6 }}>{it.name.toUpperCase()}</div>
+            <div style={{ marginTop: 4, fontSize: 8, color: value === it.id ? "#c4a3ff" : "#555", fontFamily: "'Press Start 2P'", lineHeight: 1.6 }}>{it.name.toUpperCase()}</div>
           </div>
         ))}
       </div>
@@ -400,7 +404,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
       {/* ── Pre-enchanted mode toggle ── */}
       <div style={{ marginBottom: 14 }}>
         <button onClick={() => { setPreMode(p => !p); setExisting({}); setSel({}); setResult(null); }}
-          style={{ padding: "7px 14px", borderRadius: 6, fontSize: 10, cursor: "pointer",
+          style={{ padding: "10px 14px", borderRadius: 6, fontSize: 12, cursor: "pointer", width: "100%", textAlign: "left", lineHeight: 1.5,
             fontFamily: "'IBM Plex Mono'",
             background: preMode ? "rgba(245,196,0,.08)" : T.s2,
             border:     `1px solid ${preMode ? "rgba(245,196,0,.3)" : T.border}`,
@@ -445,11 +449,11 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
 
       <Sec label="02" title={`${preMode ? "ENCHANTMENTS TO ADD" : "ENCHANTMENTS"}${count ? ` — ${count} SELECTED` : ""}`}
         action={
-          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <div className="mobile-stack" style={{ minWidth: 180 }}>
             <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="preset name..."
-              style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "4px 8px", fontSize: 11, color: T.text, outline: "none", width: 130, fontFamily: "'IBM Plex Mono'" }} />
+              style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "10px 10px", fontSize: 12, color: T.text, outline: "none", width: "100%", minWidth: 130, fontFamily: "'IBM Plex Mono'" }} />
             <button onClick={savePreset} disabled={!presetName.trim() || !count}
-              style={{ background: saved ? "rgba(74,222,128,.15)" : "rgba(166,110,255,.12)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "4px 10px", fontSize: 10, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'" }}>
+              style={{ background: saved ? "rgba(74,222,128,.15)" : "rgba(166,110,255,.12)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "10px 12px", fontSize: 12, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'" }}>
               {saved ? "✓ saved" : "💾 save"}
             </button>
           </div>
@@ -475,7 +479,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
         )}
       </Sec>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      <div className="mobile-stack" style={{ marginBottom: 16 }}>
         <button className="go-btn" onClick={calc} disabled={!count}
           style={{ flex: 1, padding: "13px 0", borderRadius: 8,
             background: count ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2,
@@ -527,17 +531,17 @@ function SetEntry({ entry, onUpdate, onRemove, edition }) {
   const item = ITEMS.find(i => i.id === entry.itemId);
   return (
     <div style={{ background: T.s2, border: `1px solid ${T.b2}`, borderRadius: 10, padding: 14 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+      <div className="mobile-stack" style={{ marginBottom: 12 }}>
         <ItemIcon item={item} size={20} />
         <select value={entry.itemId} onChange={e => onUpdate({ ...entry, itemId: e.target.value, sel: {} })}
-          style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 8px", color: T.text, fontSize: 12, flex: 1, fontFamily: "'IBM Plex Mono'", outline: "none" }}>
+          style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "10px 10px", color: T.text, fontSize: 13, flex: 1, fontFamily: "'IBM Plex Mono'", outline: "none", width: "100%" }}>
           {ITEMS.map(it => <option key={it.id} value={it.id}>{it.em} {it.name}</option>)}
         </select>
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
           <span style={{ fontSize: 10, color: T.muted }}>qty</span>
-          <button onClick={() => onUpdate({ ...entry, qty: Math.max(1, entry.qty - 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>−</button>
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent, minWidth: 14, textAlign: "center" }}>{entry.qty}</span>
-          <button onClick={() => onUpdate({ ...entry, qty: Math.min(9, entry.qty + 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>+</button>
+          <button onClick={() => onUpdate({ ...entry, qty: Math.max(1, entry.qty - 1) })} style={{ width: 32, height: 32, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 14, lineHeight: 1 }}>−</button>
+          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 11, color: T.accent, minWidth: 20, textAlign: "center" }}>{entry.qty}</span>
+          <button onClick={() => onUpdate({ ...entry, qty: Math.min(9, entry.qty + 1) })} style={{ width: 32, height: 32, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 14, lineHeight: 1 }}>+</button>
         </div>
         <button className="rm-btn" onClick={onRemove} style={{ fontSize: 16, color: T.red, lineHeight: 1, background: "none", border: "none", cursor: "pointer" }}>✕</button>
       </div>
@@ -588,15 +592,15 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
       <button className="add-btn" onClick={add} style={{ width: "100%", padding: "10px", marginBottom: 12, background: "transparent", border: `1.5px dashed ${T.border}`, borderRadius: 8, color: T.muted, fontSize: 12, fontFamily: "'IBM Plex Mono'", cursor: "pointer" }}>
         + Add Item to Set
       </button>
-      <div style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "center" }}>
+      <div className="mobile-stack" style={{ marginBottom: 16, alignItems: "stretch" }}>
         <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="save this set as..."
-          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} />
+          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "10px 12px", fontSize: 12, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'", width: "100%" }} />
         <button onClick={savePreset} disabled={!presetName.trim() || !hasSel}
-          style={{ background: saved ? "rgba(74,222,128,.12)" : "rgba(166,110,255,.1)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "6px 14px", fontSize: 11, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>
+          style={{ background: saved ? "rgba(74,222,128,.12)" : "rgba(166,110,255,.1)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "10px 14px", fontSize: 12, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap", minHeight: 42 }}>
           {saved ? "✓ saved" : "💾 save set"}
         </button>
         <button className="go-btn" onClick={calcAll} disabled={!hasSel}
-          style={{ padding: "6px 16px", borderRadius: 7, background: hasSel ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: hasSel ? "#fff" : "#333", border: `1.5px solid ${hasSel ? T.accent : T.border}`, fontFamily: "'Press Start 2P'", fontSize: 8, letterSpacing: .5, whiteSpace: "nowrap", boxShadow: hasSel ? "0 3px 14px rgba(166,110,255,.25)" : "none" }}>
+          style={{ padding: "10px 16px", borderRadius: 7, background: hasSel ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: hasSel ? "#fff" : "#333", border: `1.5px solid ${hasSel ? T.accent : T.border}`, fontFamily: "'Press Start 2P'", fontSize: 9, letterSpacing: .5, whiteSpace: "nowrap", boxShadow: hasSel ? "0 3px 14px rgba(166,110,255,.25)" : "none", minHeight: 42 }}>
           ⚒ CALCULATE SET
         </button>
       </div>
@@ -609,11 +613,11 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
               if (!res) return null;
               return (
                 <div key={e.uid} style={{ marginBottom: 12 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
                     <ItemIcon item={item} size={16} />
                     <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{item.name}</span>
                     {e.qty > 1 && <span style={{ fontSize: 10, color: T.accent, fontFamily: "'Press Start 2P'" }}>×{e.qty}</span>}
-                    <span style={{ fontSize: 10, color: T.muted, marginLeft: "auto" }}>{res.total} lvls/each{e.qty > 1 ? ` = ${res.total * e.qty} lvls total` : ""}</span>
+                    <span style={{ fontSize: 10, color: T.muted, marginLeft: "auto", minWidth: 180 }}>{res.total} lvls/each{e.qty > 1 ? ` = ${res.total * e.qty} lvls total` : ""}</span>
                   </div>
                   <ResultSteps result={res} item={item} compact={true} />
                 </div>
@@ -634,14 +638,14 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
   const isOpen = expanded === p.id;
   const viewResults = useMemo(() => {
     if (!isOpen) return null;
-    if (p.type === "single") { const item = ITEMS.find(i => i.id === p.itemId); const t0 = performance.now(); const res = solve(p.sel, item.name); res.timeMs = performance.now() - t0; return [{ item, sel: p.sel, result: res, qty: 1 }]; }
-    return p.entries.map(e => { const item = ITEMS.find(i => i.id === e.itemId); const t0 = performance.now(); const res = solve(e.sel, item.name); res.timeMs = performance.now() - t0; return { item, sel: e.sel, result: res, qty: e.qty }; }).filter(e => Object.keys(e.sel).length > 0);
+    if (p.type === "single") { const item = ITEMS.find(i => i.id === p.itemId); return [{ item, sel: p.sel, result: solve(p.sel, item.name), qty: 1 }]; }
+    return p.entries.map(e => { const item = ITEMS.find(i => i.id === e.itemId); return { item, sel: e.sel, result: solve(e.sel, item.name), qty: e.qty }; }).filter(e => Object.keys(e.sel).length > 0);
   }, [isOpen, p]);
   const totalXp = viewResults?.reduce((s, r) => s + (r.result?.total || 0) * r.qty, 0) ?? 0;
 
   return (
     <div style={{ background: T.s2, border: `1px solid ${isOpen ? T.accent : T.border}`, borderRadius: 9, overflow: "hidden", marginBottom: 8 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", cursor: "pointer" }} onClick={() => setExpanded(isOpen ? null : p.id)}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", cursor: "pointer", flexWrap: "wrap" }} onClick={() => setExpanded(isOpen ? null : p.id)}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, color: T.text, marginBottom: 3 }}>{p.name}</div>
           <div style={{ fontSize: 10, color: T.muted }}>
@@ -653,15 +657,15 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
             ) : `📦 Set — ${p.entries?.length} item type${p.entries?.length !== 1 ? "s" : ""}`}
           </div>
         </div>
-        <button onClick={e => { e.stopPropagation(); onLoad(p); }} style={{ background: "rgba(166,110,255,.1)", border: `1px solid rgba(166,110,255,.2)`, borderRadius: 5, padding: "5px 10px", fontSize: 10, color: T.accent, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>✏ edit</button>
-        <button onClick={e => { e.stopPropagation(); onDelete(p.id); setExpanded(null); }} className="rm-btn" style={{ fontSize: 14, color: T.red, background: "none", border: "none", lineHeight: 1, cursor: "pointer" }}>✕</button>
+        <button onClick={e => { e.stopPropagation(); onLoad(p); }} style={{ background: "rgba(166,110,255,.1)", border: `1px solid rgba(166,110,255,.2)`, borderRadius: 5, padding: "8px 10px", fontSize: 11, color: T.accent, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>✏ edit</button>
+        <button onClick={e => { e.stopPropagation(); onDelete(p.id); setExpanded(null); }} className="rm-btn" style={{ fontSize: 16, color: T.red, background: "none", border: "none", lineHeight: 1, cursor: "pointer", minHeight: 32, minWidth: 32 }}>✕</button>
         <span style={{ color: T.muted, fontSize: 12 }}>{isOpen ? "▲" : "▼"}</span>
       </div>
       {isOpen && viewResults && (
         <div style={{ borderTop: `1px solid ${T.border}`, padding: "12px 14px", background: "#0a0a0a" }}>
           {viewResults.map(({ item, sel, result, qty }, i) => (
             <div key={i} style={{ marginBottom: i < viewResults.length - 1 ? 16 : 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
                 <ItemIcon item={item} size={18} />
                 <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{item.name}</span>
                 {qty > 1 && <span style={{ fontSize: 9, color: T.accent, fontFamily: "'Press Start 2P'" }}>×{qty}</span>}
@@ -677,7 +681,7 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
             </div>
           ))}
           {p.type === "set" && viewResults.length > 1 && (
-            <div style={{ marginTop: 12, padding: "8px 12px", background: "#0a0818", border: "1px solid rgba(166,110,255,.2)", borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ marginTop: 12, padding: "8px 12px", background: "#0a0818", border: "1px solid rgba(166,110,255,.2)", borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
               <span style={{ fontSize: 10, color: T.muted }}>Grand total</span>
               <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent }}>{totalXp} LEVELS</span>
             </div>
@@ -701,13 +705,20 @@ function PresetsPanel({ presets, onDelete, onLoad }) {
     </div>
   );
 
-  const Group = ({ title, items }) => items.length === 0 ? null : (
-    <Sec title={title}>
-      {items.map(p => <PresetCard key={p.id} p={p} expanded={expanded} setExpanded={setExpanded} onLoad={onLoad} onDelete={onDelete} />)}
-    </Sec>
+  return (
+    <div>
+      {singles.length > 0 && (
+        <Sec title="SINGLE ITEMS">
+          {singles.map(p => <PresetCard key={p.id} p={p} expanded={expanded} setExpanded={setExpanded} onLoad={onLoad} onDelete={onDelete} />)}
+        </Sec>
+      )}
+      {sets.length > 0 && (
+        <Sec title="GEAR SETS">
+          {sets.map(p => <PresetCard key={p.id} p={p} expanded={expanded} setExpanded={setExpanded} onLoad={onLoad} onDelete={onDelete} />)}
+        </Sec>
+      )}
+    </div>
   );
-
-  return <div><Group title="SINGLE ITEMS" items={singles} /><Group title="GEAR SETS" items={sets} /></div>;
 }
 
 let presetUid = 0;
@@ -753,15 +764,15 @@ export default function App() {
   ];
 
   return (
-    <>
+      <>
       <style>{CSS}</style>
-      <div style={{ minHeight: "100vh", background: T.bg, padding: "24px 16px" }}>
-        <div style={{ maxWidth: 820, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ fontSize: 10, letterSpacing: 3, color: "#2a2a2a", fontFamily: "'IBM Plex Mono'", marginBottom: 8 }}>⟡ MINECRAFT TOOLS ⟡</div>
+      <div className="app-shell">
+        <div className="app-container">
+          <div className="app-header">
+            <div style={{ fontSize: 11, letterSpacing: 2, color: "#2a2a2a", fontFamily: "'IBM Plex Mono'", marginBottom: 8 }}>⟡ MINECRAFT TOOLS ⟡</div>
             <h1 style={{ fontFamily: "'Press Start 2P'", fontSize: "clamp(12px,2.5vw,20px)", color: T.accent, lineHeight: 1.6, textShadow: "0 0 20px rgba(166,110,255,.6)" }}>ANVIL OPTIMIZER</h1>
-            <p style={{ marginTop: 6, color: "#333", fontSize: 11 }}>Wiki · Presets · Set Builder · DP-optimized XP cost</p>
-            <div style={{ marginTop: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <p style={{ marginTop: 8, color: "#4b4b4b", fontSize: 13 }}>Wiki · Presets · Set Builder · DP-optimized XP cost</p>
+            <div className="app-header-controls">
               <EditionToggle edition={edition} onChange={handleEdition} />
               <VersionBadge onClick={() => setTab("changelog")} />
             </div>
@@ -772,10 +783,10 @@ export default function App() {
             )}
           </div>
 
-          <div style={{ display: "flex", gap: 3, marginBottom: 20, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 4 }}>
+          <div className="tab-rail">
             {tabs.map(t => (
               <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)}
-                style={{ flex: 1, padding: "9px 0", borderRadius: 5, border: "none", background: tab === t.id ? T.accentBg : "transparent", color: tab === t.id ? T.accent : T.muted, fontFamily: "'Press Start 2P'", fontSize: "clamp(5px,1.1vw,8px)", boxShadow: tab === t.id ? "inset 0 0 0 1px rgba(166,110,255,.25)" : "none", cursor: "pointer" }}>
+                style={{ flex: 1, padding: "10px 12px", borderRadius: 5, border: "none", background: tab === t.id ? T.accentBg : "transparent", color: tab === t.id ? T.accent : T.muted, fontFamily: "'Press Start 2P'", fontSize: "10px", boxShadow: tab === t.id ? "inset 0 0 0 1px rgba(166,110,255,.25)" : "none", cursor: "pointer", whiteSpace: "nowrap" }}>
                 {t.label}
               </button>
             ))}

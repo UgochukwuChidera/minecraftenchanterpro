@@ -16,12 +16,13 @@ const POLL_INTERVAL = 8000; // ms between online checks when offline
 function Toast({ toasts }) {
   return (
     <div style={{
-      position: "fixed", bottom: 24, right: 24, zIndex: 9999,
+      position: "fixed", bottom: "calc(12px + env(safe-area-inset-bottom))", right: 12, zIndex: 9999,
       display: "flex", flexDirection: "column", gap: 8, pointerEvents: "none",
+      width: "min(360px, calc(100vw - 24px))",
     }}>
       {toasts.map(t => (
         <div key={t.id} style={{
-          padding: "10px 16px", borderRadius: 8, fontSize: 11,
+          padding: "12px 16px", borderRadius: 8, fontSize: 12,
           fontFamily: "'IBM Plex Mono'", maxWidth: 300,
           background: t.type === "success" ? "rgba(74,222,128,.12)"
                     : t.type === "error"   ? "rgba(239,68,68,.12)"
@@ -188,8 +189,8 @@ export default function Support() {
           {TYPES.map(t => (
             <button key={t.id} onClick={() => set("type", t.id)}
               style={{
-                padding: "7px 14px", borderRadius: 6, cursor: "pointer",
-                fontSize: 11, fontFamily: "'IBM Plex Mono'",
+                padding: "10px 14px", borderRadius: 6, cursor: "pointer", minHeight: 40,
+                fontSize: 12, fontFamily: "'IBM Plex Mono'",
                 background: form.type === t.id ? `${t.color}18` : T.s2,
                 border:     `1px solid ${form.type === t.id ? t.color : T.border}`,
                 color:      form.type === t.id ? t.color : T.muted,
@@ -201,7 +202,7 @@ export default function Support() {
       </div>
 
       {/* ── Name + Email row ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+      <div className="mobile-grid-2" style={{ marginBottom: 14 }}>
         <div>
           <label style={labelStyle}>NAME <span title="You must fill this in before sending" style={{ color: "#444", fontSize: 8, cursor: "help", borderBottom: "1px dotted #333" }}>required</span></label>
           <input value={form.name} onChange={e => set("name", e.target.value)}
@@ -261,6 +262,9 @@ export default function Support() {
       </div>
 
       <style>{`
+        @media (max-width:767px){
+          .mobile-grid-2{grid-template-columns:1fr !important;}
+        }
         @keyframes fadeSlideIn {
           from { opacity: 0; transform: translateY(8px); }
           to   { opacity: 1; transform: translateY(0); }

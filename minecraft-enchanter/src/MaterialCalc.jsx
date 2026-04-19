@@ -161,7 +161,7 @@ const ANVIL_MATS = { "Iron Ingot (for Anvil)": 31 };
 // ── Section wrapper ───────────────────────────────────────
 function Sec({ label, title, children }) {
   return (
-    <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18, marginBottom: 14 }}>
+    <div className="section-card" style={{ marginBottom: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
         {label && <span style={{ fontFamily: "'Press Start 2P'", fontSize: 7, color: "#333" }}>{label}</span>}
         <div style={{ flex: 1, height: 1, background: T.border }} />
@@ -175,10 +175,10 @@ function Sec({ label, title, children }) {
 // ── Material row ──────────────────────────────────────────
 function MatRow({ icon, label, qty, sub, color }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "7px 10px",
+    <div className="mat-row" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 10px",
       background: T.s2, border: `1px solid ${T.border}`, borderRadius: 6, marginBottom: 5 }}>
       {icon && <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>}
-      <span style={{ flex: 1, fontSize: 12, color: color || T.text }}>{label}</span>
+      <span style={{ flex: 1, fontSize: 12, color: color || T.text, minWidth: 0 }}>{label}</span>
       {sub && <span style={{ fontSize: 10, color: T.muted }}>{sub}</span>}
       <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10,
         color: color || T.accent, minWidth: 30, textAlign: "right" }}>×{qty}</span>
@@ -295,10 +295,20 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+      <style>{`
+        .mc-item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-bottom:14px}
+        .mc-tier-wrap{display:flex;flex-wrap:wrap;gap:8px}
+        .mc-qty-wrap{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+        @media (max-width:767px){
+          .mc-item-grid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr))}
+          .mat-row{flex-wrap:wrap}
+          .mat-row > span:last-child{margin-left:auto}
+        }
+      `}</style>
 
       {/* Item selector */}
       <Sec label="01" title="ITEM & MATERIAL">
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(68px,1fr))", gap: 5, marginBottom: 14 }}>
+        <div className="mc-item-grid">
           {ITEMS.map(it => (
             <div key={it.id} onClick={() => handleItemChange(it.id)}
               style={{
@@ -322,14 +332,14 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
         {!isFixed && !isFound && (
           <div>
             <div style={{ fontSize: 10, color: T.muted, marginBottom: 7 }}>MATERIAL TIER</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            <div className="mc-tier-wrap">
               {tiers.map(t => {
                 const td = TIERS[t];
                 if (!td) return null;
                 return (
                   <div key={t} onClick={() => setTier(t)}
                     style={{
-                      padding: "6px 12px", borderRadius: 6, cursor: "pointer",
+                      padding: "10px 12px", borderRadius: 6, cursor: "pointer", minHeight: 40,
                       background: tier === t ? `${td.color}18` : T.s2,
                       border: `1.5px solid ${tier === t ? td.color : T.border}`,
                       fontSize: 12, color: tier === t ? td.color : T.muted,
@@ -346,14 +356,14 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
         {isFound && <div style={{ fontSize: 11, color: T.red, marginTop: 4 }}>⚠ Tridents cannot be crafted. See notes below.</div>}
 
         {/* Quantity */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14 }}>
+        <div className="mc-qty-wrap">
           <span style={{ fontSize: 11, color: T.muted }}>QUANTITY</span>
           <button onClick={() => setQty(q => Math.max(1, q - 1))}
-            style={{ width: 26, height: 26, background: T.s3, border: `1px solid ${T.border}`,
+            style={{ width: 36, height: 36, background: T.s3, border: `1px solid ${T.border}`,
               borderRadius: 5, cursor: "pointer", color: T.muted, fontSize: 14 }}>−</button>
           <span style={{ fontFamily: "'Press Start 2P'", fontSize: 12, color: T.accent, minWidth: 20, textAlign: "center" }}>{qty}</span>
           <button onClick={() => setQty(q => Math.min(64, q + 1))}
-            style={{ width: 26, height: 26, background: T.s3, border: `1px solid ${T.border}`,
+            style={{ width: 36, height: 36, background: T.s3, border: `1px solid ${T.border}`,
               borderRadius: 5, cursor: "pointer", color: T.muted, fontSize: 14 }}>+</button>
           {qty > 1 && <span style={{ fontSize: 10, color: T.muted }}>crafting {qty}×</span>}
         </div>
