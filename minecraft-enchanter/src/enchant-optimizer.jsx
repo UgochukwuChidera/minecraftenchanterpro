@@ -152,8 +152,24 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
                 <div style={{ width: 16, height: 16, borderRadius: 3, flexShrink: 0, border: `1.5px solid ${active ? T.accent : "#333"}`, background: active ? T.accent : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff" }}>{active && "✓"}</div>
                 <span style={{ flex: 1, fontSize: 12, color: curse ? T.red : active ? "#d4baff" : T.muted2 }}>
                   {enc.name}
-                  {curse && <span style={{ fontSize: 9, color: T.red, marginLeft: 4, opacity: .8 }}>CURSE</span>}
-                  {enc.javaOnly && <span title="Java Edition only — this enchantment does not exist in Bedrock Edition" style={{ fontSize: 7, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: "'Press Start 2P'", opacity: .8, cursor: "help" }}>JAVA</span>}
+                  {curse && (
+                    <span 
+                      className="tooltip-trigger" 
+                      data-tooltip="Curse enchantment — generally negative effects and cannot be removed via Grindstone." 
+                      style={{ fontSize: 9, color: T.red, marginLeft: 4, opacity: .8 }}
+                    >
+                      CURSE
+                    </span>
+                  )}
+                  {enc.javaOnly && (
+                    <span 
+                      className="tooltip-trigger" 
+                      data-tooltip="Java Edition only — this enchantment does not exist in Bedrock Edition." 
+                      style={{ fontSize: 7, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: "'Press Start 2P'", opacity: .8 }}
+                    >
+                      JAVA
+                    </span>
+                  )}
                 </span>
                 <button className="icon-btn" onClick={e => { e.stopPropagation(); setOpenWiki(wikiOpen ? null : id); }}
                   style={{ fontSize: 11, color: wikiOpen ? T.accent : "#333", padding: "0 4px", lineHeight: 1, fontFamily: "'IBM Plex Mono'" }}>ⓘ</button>

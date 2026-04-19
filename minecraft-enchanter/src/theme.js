@@ -42,6 +42,44 @@ body{background:${T.bg};font-family:'IBM Plex Mono',monospace;color:${T.text}}
 .recent-btn{transition:all .12s;cursor:pointer}
 .recent-btn:hover{border-color:#a66eff!important;transform:translateY(-1px)}
 
+/* Custom Dropdown */
+.custom-select { position: relative; user-select: none; }
+.select-trigger { 
+  background: ${T.s3}; border: 1px solid ${T.border}; border-radius: 8px; 
+  padding: 10px 14px; color: ${T.text}; font-size: 11px; cursor: pointer; 
+  display: flex; justify-content: space-between; alignItems: center; gap: 10px;
+  transition: border-color .15s;
+}
+.select-trigger:hover { border-color: ${T.accent}; }
+.select-options { 
+  position: absolute; top: calc(100% + 5px); left: 0; right: 0; 
+  background: ${T.s2}; border: 1px solid ${T.border}; border-radius: 8px; 
+  overflow: hidden; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  animation: pdrop .15s ease-out;
+}
+@keyframes pdrop { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+.select-option { 
+  padding: 10px 14px; font-size: 11px; color: ${T.muted2}; cursor: pointer; 
+  transition: all .1s; 
+}
+.select-option:hover { background: ${T.accentBg}; color: ${T.accent}; }
+.select-option.active { background: ${T.accent}15; color: ${T.accent}; font-weight: bold; }
+
+/* Tooltip Styles */
+[data-tooltip] { position: relative; cursor: help; }
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+  padding: 6px 10px; background: #151515; border: 1px solid ${T.accent}44;
+  color: #ccc; font-size: 9px; line-height: 1.4; border-radius: 6px;
+  white-space: pre-wrap; width: 180px; text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  pointer-events: none; opacity: 0; transition: all .15s;
+  z-index: 1000; font-family: 'IBM Plex Mono', monospace;
+}
+[data-tooltip]:hover::before { opacity: 1; bottom: 140%; }
+.tooltip-trigger:hover { filter: brightness(1.2); }
+
 /* Responsive Utilities */
 @media (max-width: 600px) {
   .stack-mobile { flex-direction: column !important; align-items: stretch !important; }

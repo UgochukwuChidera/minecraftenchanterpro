@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { E, ITEMS } from "./data.js";
 
 const T = {
@@ -40,6 +40,49 @@ const FAQS = [
     a: "Sometimes yes, sometimes no. Combining two books gives the resulting book a Prior Work Penalty, which adds up later. Our optimal solver dynamically calculates when it is mathematically cheaper to combine books versus applying them one by one to your item."
   }
 ];
+
+function WikiDropdown({ value, onChange, options }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setIsOpen(false);
+    };
+    window.addEventListener("click", handleClick);
+    return () => window.removeEventListener("click", handleClick);
+  }, []);
+
+  const activeTitle = options.find(o => o.id === value)?.title || "All Groups";
+
+  return (
+    <div className="custom-select" ref={containerRef} style={{ width: 220 }}>
+      <div className="select-trigger" onClick={() => setIsOpen(!isOpen)}>
+        <span>{activeTitle}</span>
+        <span style={{ fontSize: 8, opacity: 0.5 }}>{isOpen ? "▲" : "▼"}</span>
+      </div>
+      {isOpen && (
+        <div className="select-options">
+          <div 
+            className={`select-option ${value === "all" ? "active" : ""}`} 
+            onClick={() => { onChange("all"); setIsOpen(false); }}
+          >
+            All Groups
+          </div>
+          {options.map(opt => (
+            <div 
+              key={opt.id} 
+              className={`select-option ${value === opt.id ? "active" : ""}`}
+              onClick={() => { onChange(opt.id); setIsOpen(false); }}
+            >
+              {opt.title}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Wiki() {
   const [search, setSearch] = useState("");
@@ -101,16 +144,11 @@ export default function Wiki() {
           placeholder="🔍 Search enchantments..."
           style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} 
         />
-        <select 
+        <WikiDropdown 
           value={activeGroup} 
-          onChange={e => setActiveGroup(e.target.value)}
-          style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", color: T.text, fontSize: 11, fontFamily: "'IBM Plex Mono'", outline: "none", cursor: "pointer" }}
-        >
-          <option value="all">All Groups</option>
-          {ENCHANT_GROUPS.map(g => (
-            <option key={g.id} value={g.id}>{g.title}</option>
-          ))}
-        </select>
+          onChange={setActiveGroup}
+          options={ENCHANT_GROUPS}
+        />
       </div>
 
       {/* Enchantment Directory */}
@@ -134,8 +172,24 @@ export default function Wiki() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, gap: 10 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                         <span style={{ fontSize: 14, color: T.text, fontWeight: "bold" }}>{enc.name}</span>
-                        {enc.javaOnly && <span style={{ fontSize: 7, color: T.java || "#ed8b00", padding: "2px 6px", border: `1px solid ${T.java || "#ed8b00"}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}>JAVA ONLY</span>}
-                        {id.startsWith("curse") && <span style={{ fontSize: 7, color: T.red, padding: "2px 6px", border: `1px solid ${T.red}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}>CURSE</span>}
+                        {enc.javaOnly && (
+                          <span 
+                            className="tooltip-trigger" 
+                            data-tooltip="Java Edition only — this enchantment does not exist in Bedrock Edition." 
+                            style={{ fontSize: 7, color: T.java || "#ed8b00", padding: "2px 6px", border: `1px solid ${T.java || "#ed8b00"}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}
+                          >
+                            JAVA ONLY
+                          </span>
+                        )}
+                        {id.startsWith("curse") && (
+                          <span 
+                            className="tooltip-trigger" 
+                            data-tooltip="Curse enchantment — generally negative effects and cannot be removed via Grindstone." 
+                            style={{ fontSize: 7, color: T.red, padding: "2px 6px", border: `1px solid ${T.red}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}
+                          >
+                            CURSE
+                          </span>
+                        )}
                       </div>
                       <div style={{ display: "flex", gap: 10, fontSize: 10, color: T.muted2 }}>
                         <span>Max Lvl: <span style={{ color: "#d4baff" }}>{enc.maxLvl}</span></span>
