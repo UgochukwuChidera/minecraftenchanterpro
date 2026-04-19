@@ -32,9 +32,9 @@ function pushRecent(itemId) {
 function Sec({ label, title, children, action }) {
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18, marginBottom: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+      <div className="sec-header" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
         {label && <span style={{ fontFamily: "'Press Start 2P'", fontSize: 7, color: "#333" }}>{label}</span>}
-        <div style={{ flex: 1, height: 1, background: T.border }} />
+        <div className="spacer" style={{ flex: 1, height: 1, background: T.border }} />
         <span style={{ fontFamily: "'Press Start 2P'", fontSize: 8, color: T.accent }}>{title}</span>
         {action}
       </div>
@@ -159,7 +159,7 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
                   style={{ fontSize: 11, color: wikiOpen ? T.accent : "#333", padding: "0 4px", lineHeight: 1, fontFamily: "'IBM Plex Mono'" }}>ⓘ</button>
                 <span style={{ fontSize: 10, color: "#2a2a2a", minWidth: 38, textAlign: "right" }}>×{enc.mult}</span>
                 {enc.maxLvl > 1 && (
-                  <div style={{ display: "flex", gap: 3 }} onClick={e => e.stopPropagation()}>
+                  <div className="lvl-container" style={{ display: "flex", gap: 3 }} onClick={e => e.stopPropagation()}>
                     {Array.from({ length: enc.maxLvl }, (_, i) => i + 1).map(lvl => (
                       <button key={lvl} className="lvbtn" onClick={() => { if (!active) toggle(id); setLvl(id, lvl); }}
                         style={{ width: 24, height: 22, borderRadius: 4, fontSize: 8, fontFamily: "'Press Start 2P'", background: (active && sel[id] === lvl) ? T.accent : "#1a1a1a", color: (active && sel[id] === lvl) ? "#fff" : "#444" }}>{rom(lvl)}</button>
@@ -445,9 +445,9 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
 
       <Sec label="02" title={`${preMode ? "ENCHANTMENTS TO ADD" : "ENCHANTMENTS"}${count ? ` — ${count} SELECTED` : ""}`}
         action={
-          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
             <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="preset name..."
-              style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "4px 8px", fontSize: 11, color: T.text, outline: "none", width: 130, fontFamily: "'IBM Plex Mono'" }} />
+              style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "4px 8px", fontSize: 11, color: T.text, outline: "none", width: 130, maxWidth: "100%", fontFamily: "'IBM Plex Mono'" }} />
             <button onClick={savePreset} disabled={!presetName.trim() || !count}
               style={{ background: saved ? "rgba(74,222,128,.15)" : "rgba(166,110,255,.12)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "4px 10px", fontSize: 10, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'" }}>
               {saved ? "✓ saved" : "💾 save"}
@@ -475,7 +475,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
         )}
       </Sec>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      <div className="stack-mobile" style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <button className="go-btn" onClick={calc} disabled={!count}
           style={{ flex: 1, padding: "13px 0", borderRadius: 8,
             background: count ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2,
@@ -527,19 +527,23 @@ function SetEntry({ entry, onUpdate, onRemove, edition }) {
   const item = ITEMS.find(i => i.id === entry.itemId);
   return (
     <div style={{ background: T.s2, border: `1px solid ${T.b2}`, borderRadius: 10, padding: 14 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-        <ItemIcon item={item} size={20} />
-        <select value={entry.itemId} onChange={e => onUpdate({ ...entry, itemId: e.target.value, sel: {} })}
-          style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 8px", color: T.text, fontSize: 12, flex: 1, fontFamily: "'IBM Plex Mono'", outline: "none" }}>
-          {ITEMS.map(it => <option key={it.id} value={it.id}>{it.em} {it.name}</option>)}
-        </select>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <span style={{ fontSize: 10, color: T.muted }}>qty</span>
-          <button onClick={() => onUpdate({ ...entry, qty: Math.max(1, entry.qty - 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>−</button>
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent, minWidth: 14, textAlign: "center" }}>{entry.qty}</span>
-          <button onClick={() => onUpdate({ ...entry, qty: Math.min(9, entry.qty + 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>+</button>
+      <div className="stack-mobile" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+          <ItemIcon item={item} size={20} />
+          <select value={entry.itemId} onChange={e => onUpdate({ ...entry, itemId: e.target.value, sel: {} })}
+            style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 8px", color: T.text, fontSize: 12, flex: 1, fontFamily: "'IBM Plex Mono'", outline: "none" }}>
+            {ITEMS.map(it => <option key={it.id} value={it.id}>{it.em} {it.name}</option>)}
+          </select>
         </div>
-        <button className="rm-btn" onClick={onRemove} style={{ fontSize: 16, color: T.red, lineHeight: 1, background: "none", border: "none", cursor: "pointer" }}>✕</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            <span style={{ fontSize: 10, color: T.muted }}>qty</span>
+            <button onClick={() => onUpdate({ ...entry, qty: Math.max(1, entry.qty - 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>−</button>
+            <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent, minWidth: 14, textAlign: "center" }}>{entry.qty}</span>
+            <button onClick={() => onUpdate({ ...entry, qty: Math.min(9, entry.qty + 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>+</button>
+          </div>
+          <button className="rm-btn" onClick={onRemove} style={{ fontSize: 16, color: T.red, lineHeight: 1, background: "none", border: "none", cursor: "pointer" }}>✕</button>
+        </div>
       </div>
       <EnchantPicker item={item} sel={entry.sel} onChange={n => onUpdate({ ...entry, sel: n })} edition={edition} />
     </div>
@@ -588,17 +592,19 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
       <button className="add-btn" onClick={add} style={{ width: "100%", padding: "10px", marginBottom: 12, background: "transparent", border: `1.5px dashed ${T.border}`, borderRadius: 8, color: T.muted, fontSize: 12, fontFamily: "'IBM Plex Mono'", cursor: "pointer" }}>
         + Add Item to Set
       </button>
-      <div style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "center" }}>
+      <div className="stack-mobile" style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "stretch" }}>
         <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="save this set as..."
           style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} />
-        <button onClick={savePreset} disabled={!presetName.trim() || !hasSel}
-          style={{ background: saved ? "rgba(74,222,128,.12)" : "rgba(166,110,255,.1)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "6px 14px", fontSize: 11, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>
-          {saved ? "✓ saved" : "💾 save set"}
-        </button>
-        <button className="go-btn" onClick={calcAll} disabled={!hasSel}
-          style={{ padding: "6px 16px", borderRadius: 7, background: hasSel ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: hasSel ? "#fff" : "#333", border: `1.5px solid ${hasSel ? T.accent : T.border}`, fontFamily: "'Press Start 2P'", fontSize: 8, letterSpacing: .5, whiteSpace: "nowrap", boxShadow: hasSel ? "0 3px 14px rgba(166,110,255,.25)" : "none" }}>
-          ⚒ CALCULATE SET
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={savePreset} disabled={!presetName.trim() || !hasSel}
+            style={{ flex: 1, background: saved ? "rgba(74,222,128,.12)" : "rgba(166,110,255,.1)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "6px 14px", fontSize: 11, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>
+            {saved ? "✓ saved" : "💾 save set"}
+          </button>
+          <button className="go-btn" onClick={calcAll} disabled={!hasSel}
+            style={{ flex: 1, padding: "6px 16px", borderRadius: 7, background: hasSel ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: hasSel ? "#fff" : "#333", border: `1.5px solid ${hasSel ? T.accent : T.border}`, fontFamily: "'Press Start 2P'", fontSize: 8, letterSpacing: .5, whiteSpace: "nowrap", boxShadow: hasSel ? "0 3px 14px rgba(166,110,255,.25)" : "none" }}>
+            ⚒ CALCULATE SET
+          </button>
+        </div>
       </div>
       {Object.keys(results).length > 0 && (
         <div ref={resultsRef}>
@@ -772,7 +778,7 @@ export default function App() {
             )}
           </div>
 
-          <div style={{ display: "flex", gap: 3, marginBottom: 20, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 4 }}>
+          <div className="tab-grid" style={{ display: "flex", gap: 3, marginBottom: 20, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 4 }}>
             {tabs.map(t => (
               <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)}
                 style={{ flex: 1, padding: "9px 0", borderRadius: 5, border: "none", background: tab === t.id ? T.accentBg : "transparent", color: tab === t.id ? T.accent : T.muted, fontFamily: "'Press Start 2P'", fontSize: "clamp(5px,1.1vw,8px)", boxShadow: tab === t.id ? "inset 0 0 0 1px rgba(166,110,255,.25)" : "none", cursor: "pointer" }}>

@@ -41,4 +41,19 @@ body{background:${T.bg};font-family:'IBM Plex Mono',monospace;color:${T.text}}
 .edition-btn:hover{filter:brightness(1.1)}
 .recent-btn{transition:all .12s;cursor:pointer}
 .recent-btn:hover{border-color:#a66eff!important;transform:translateY(-1px)}
+
+/* Responsive Utilities */
+@media (max-width: 600px) {
+  .stack-mobile { flex-direction: column !important; align-items: stretch !important; }
+  .tab-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 4px !important; }
+  .tab-btn { font-size: 8px !important; padding: 12px 0 !important; }
+  .sec-header { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+  .sec-header .spacer { display: none !important; }
+  .erow { flex-wrap: wrap !important; gap: 10px 8px !important; }
+  .erow .lvl-container { width: 100% !important; justify-content: flex-end !important; margin-top: 4px !important; }
+}
+@media (max-width: 400px) {
+  .tab-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .go-btn { font-size: 8px !important; padding: 16px 8px !important; }
+}
 `;
