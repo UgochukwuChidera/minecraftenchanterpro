@@ -89,6 +89,7 @@ body{background:${T.bg};font-family:'IBM Plex Mono',monospace;color:${T.text}}
   .sec-header .spacer { display: none !important; }
   .erow { flex-wrap: wrap !important; gap: 10px 8px !important; }
   .erow .lvl-container { width: 100% !important; justify-content: flex-end !important; margin-top: 4px !important; }
+  .wiki-panel { margin-left: 0 !important; }
 }
 @media (max-width: 400px) {
   .tab-grid { grid-template-columns: repeat(2, 1fr) !important; }

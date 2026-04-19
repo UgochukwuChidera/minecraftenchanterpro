@@ -22,9 +22,17 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
+    version: "2.0.1",
+    date: "2026-04-19",
+    label: "latest",
+    entries: [
+      { tag: "improved", text: "Global responsiveness audit — refined layouts across all tabs for mobile and tablet screens, ensuring a seamless experience regardless of device size." },
+      { tag: "design", text: "Wiki UI overhaul — replaced native select elements with custom premium dropdowns and implemented a custom tooltip system for enchantment tags, removing default browser tooltip reliance." }
+    ]
+  },
+  {
     version: "2.0.0",
     date: "2026-04-04",
-    label: "latest",
     entries: [
       { tag: "new", text: "Enchantment System Wiki — full glossary of items, mechanics, and an FAQ packed with factual and helpful details." }
     ]
@@ -161,7 +169,7 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("2.0.0");
+  const [expanded, setExpanded] = useState("2.0.1");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>

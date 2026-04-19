@@ -56,7 +56,7 @@ function WikiDropdown({ value, onChange, options }) {
   const activeTitle = options.find(o => o.id === value)?.title || "All Groups";
 
   return (
-    <div className="custom-select" ref={containerRef} style={{ width: 220 }}>
+    <div className="custom-select" ref={containerRef} style={{ width: "100%" }}>
       <div className="select-trigger" onClick={() => setIsOpen(!isOpen)}>
         <span>{activeTitle}</span>
         <span style={{ fontSize: 8, opacity: 0.5 }}>{isOpen ? "▲" : "▼"}</span>
@@ -137,18 +137,20 @@ export default function Wiki() {
       </div>
 
       {/* Search and Filter */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+      <div className="stack-mobile" style={{ display: "flex", gap: 10, marginBottom: 16 }}>
         <input 
           value={search} 
           onChange={e => setSearch(e.target.value)} 
           placeholder="🔍 Search enchantments..."
           style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} 
         />
-        <WikiDropdown 
-          value={activeGroup} 
-          onChange={setActiveGroup}
-          options={ENCHANT_GROUPS}
-        />
+        <div style={{ minWidth: 200 }}>
+          <WikiDropdown 
+            value={activeGroup} 
+            onChange={setActiveGroup}
+            options={ENCHANT_GROUPS}
+          />
+        </div>
       </div>
 
       {/* Enchantment Directory */}
