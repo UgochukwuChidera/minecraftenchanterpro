@@ -432,7 +432,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
             0 = came from enchanting table or chest loot. 1 = had one book applied. Each use doubles the penalty.
           </div>
           <EnchantPicker item={item} sel={existing}
-            onChange={n => { setExisting(n); setSel({}); setResult(null); }} edition={edition} tint="yellow" />
+            onChange={n => { setExisting(n); setSel({}); setResult(null); }} edition={edition} />
           {existingKeys.length > 0 && (
             <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 5 }}>
               {existingKeys.map(id => (

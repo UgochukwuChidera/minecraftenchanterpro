@@ -202,7 +202,7 @@ function SimplePicker({ item, sel, onChange, E, rom }) {
     const s = new Set();
     Object.keys(sel).forEach(id => E[id].incomp.forEach(x => s.add(x)));
     return s;
-  }, [sel]);
+  }, [sel, E]);
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -271,8 +271,14 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
 
   const itemMats = useMemo(() => recipe(itemId, activeTier), [itemId, activeTier]);
   const bookCount = Object.keys(sel).length;
-  const bookMats = includeBooks && bookCount > 0 ? bookMaterials(bookCount) : {};
-  const anvilMats = includeAnvil ? ANVIL_MATS : {};
+  const bookMats = useMemo(
+    () => (includeBooks && bookCount > 0 ? bookMaterials(bookCount) : {}),
+    [includeBooks, bookCount]
+  );
+  const anvilMats = useMemo(
+    () => (includeAnvil ? ANVIL_MATS : {}),
+    [includeAnvil]
+  );
 
   // Combine all mats × qty (item mats scale with qty, books/anvil are one-time)
   const totalMats = useMemo(() => {
