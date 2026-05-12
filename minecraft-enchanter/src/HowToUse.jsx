@@ -17,7 +17,7 @@ const SECTIONS = [
     content: [
       { type: "p", text: "Minecraft Enchanter Pro calculates the cheapest possible XP cost to enchant any item by finding the optimal anvil combining sequence. It uses dynamic programming to exhaustively test every possible merge tree — not just book-first, but every combination including applying individual books to your item at any stage." },
       { type: "callout", color: "purple", text: "The algorithm treats your item as an equal participant in the merge tree. It is not forced to combine all books first — it tries every possible order, including applying a single book to the item early if that turns out cheaper. This can make a huge difference: a 4-enchant pickaxe that costs 37 levels the naïve way costs only 23 with the correct algorithm." },
-      { type: "p", text: "The app has seven tabs: Calculator, Set Builder, Presets, Materials, Guide, Changelog, and Support." },
+      { type: "p", text: "The app has eight tabs: Calculator, Set Builder, Presets, Materials, Guide, Wiki, Changelog, and Support." },
       { type: "table", headers: ["Tab", "What it does"], rows: [
         ["⚒ Calculator",   "Pick an item, select enchants, get the optimal step-by-step order"],
         ["📦 Set Builder", "Build a full gear set — multiple items at once with a grand total XP"],
@@ -59,7 +59,7 @@ const SECTIONS = [
       { type: "step", num: 7,  title: "Export or share",         text: "Click 📋 export to copy the steps as plain text for Discord or notes. Click 🔗 share to copy a URL that pre-fills the exact same item and enchants for anyone you send it to — or to bookmark it yourself." },
       { type: "step", num: 8,  title: "Cost chart",              text: "Toggle the cost breakdown chart to see each enchant's contribution as colour-coded bars. Useful for spotting which enchant is making a build expensive or pushing a step over 39." },
       { type: "step", num: 9,  title: "Save as preset",          text: "Type a name and click 💾 save to store the build for instant recall in the Presets tab." },
-      { type: "callout", color: "blue", text: "Keyboard shortcuts: Space = Calculate, Esc = Clear. Both are ignored while you are typing in a text input." },
+      { type: "callout", color: "blue", text: "Keyboard shortcuts: Ctrl/Cmd+K (or /) = Command Palette, Space = Calculate, Esc = Clear/close. Shortcuts are ignored while typing in text inputs." },
     ]
   },
   {

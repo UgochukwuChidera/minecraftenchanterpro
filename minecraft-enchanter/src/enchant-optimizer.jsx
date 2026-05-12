@@ -65,6 +65,118 @@ function EditionToggle({ edition, onChange }) {
   );
 }
 
+function CommandPalette({ open, onClose, commands }) {
+  const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const inputRef = useRef(null);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return commands;
+    return commands.filter(c => {
+      const haystack = `${c.label} ${c.group || ""} ${c.keywords || ""} ${c.hint || ""}`.toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [commands, query]);
+
+  useEffect(() => {
+    if (!open) return;
+    setQuery("");
+    setActiveIndex(0);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }, [open]);
+
+  useEffect(() => {
+    if (!filtered.length) { setActiveIndex(0); return; }
+    setActiveIndex(i => Math.min(i, filtered.length - 1));
+  }, [filtered]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex(i => filtered.length ? (i + 1) % filtered.length : 0);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex(i => filtered.length ? (i - 1 + filtered.length) % filtered.length : 0);
+      } else if (e.key === "Enter") {
+        if (!filtered.length) return;
+        e.preventDefault();
+        filtered[activeIndex]?.run?.();
+        onClose();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, filtered, activeIndex, onClose]);
+
+  if (!open) return null;
+
+  let previousGroup = "";
+  return (
+    <div onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 1200, background: "rgba(0,0,0,.68)",
+        backdropFilter: "blur(4px)", padding: 14, display: "flex", alignItems: "flex-start", justifyContent: "center"
+      }}>
+      <div onClick={e => e.stopPropagation()}
+        style={{
+          marginTop: "min(14vh, 100px)", width: "min(760px, 100%)", maxHeight: "72vh",
+          background: "#070707", border: `1px solid ${T.border}`, borderRadius: 12, overflow: "hidden",
+          boxShadow: "0 24px 64px rgba(0,0,0,.65)"
+        }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 12px", borderBottom: `1px solid ${T.border}` }}>
+          <span style={{ color: T.muted, fontSize: 12 }}>🔍</span>
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Type a command or search..."
+            style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: T.text, fontSize: 12, fontFamily: "'IBM Plex Mono'" }}
+          />
+          <button onClick={onClose} style={{ border: "none", background: "none", color: T.muted, fontSize: 16, cursor: "pointer", lineHeight: 1 }}>✕</button>
+        </div>
+
+        <div style={{ overflowY: "auto", maxHeight: "calc(72vh - 54px)", padding: "8px 0" }}>
+          {!filtered.length && (
+            <div style={{ padding: "14px 14px", fontSize: 11, color: T.muted }}>No commands found for "{query}"</div>
+          )}
+          {filtered.map((c, i) => {
+            const showGroup = c.group !== previousGroup;
+            previousGroup = c.group;
+            return (
+              <div key={c.id}>
+                {showGroup && (
+                  <div style={{
+                    padding: "10px 14px 4px", fontSize: 9, color: "#646464",
+                    fontFamily: "'Press Start 2P'", letterSpacing: .5
+                  }}>
+                    {c.group}
+                  </div>
+                )}
+                <button onClick={() => { c.run?.(); onClose(); }}
+                  style={{
+                    width: "100%", textAlign: "left", border: "none", background: i === activeIndex ? "rgba(166,110,255,.16)" : "transparent",
+                    borderTop: `1px solid ${i === activeIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
+                    borderBottom: `1px solid ${i === activeIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
+                    color: i === activeIndex ? "#efe4ff" : T.text, padding: "10px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 12
+                  }}>
+                  <span style={{ fontSize: 12, flex: 1 }}>{c.label}</span>
+                  {c.hint && <span style={{ fontSize: 10, color: T.muted }}>{c.hint}</span>}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WikiPanel({ id, edition }) {
   const enc = E[id];
   const desc = (edition === "bedrock" && enc.bedrockDesc) ? enc.bedrockDesc : enc.desc;
@@ -378,6 +490,13 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   }, [sel, item, count, preMode, itemWC]);
 
+  const togglePreMode = useCallback(() => {
+    setPreMode(p => !p);
+    setExisting({});
+    setSel({});
+    setResult(null);
+  }, []);
+
   useEffect(() => {
     const handler = (e) => {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
@@ -400,6 +519,19 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
     });
   };
 
+  useEffect(() => {
+    const onCommand = (e) => {
+      const action = e.detail?.action;
+      if (action === "single-calc") calc();
+      if (action === "single-clear") { setSel({}); setResult(null); }
+      if (action === "single-share" && count) handleShare();
+      if (action === "single-toggle-chart" && count) setShowChart(v => !v);
+      if (action === "single-toggle-preechanted") togglePreMode();
+    };
+    window.addEventListener("mc:command", onCommand);
+    return () => window.removeEventListener("mc:command", onCommand);
+  }, [calc, count, togglePreMode, handleShare]);
+
   const existingKeys = Object.keys(existing);
 
   return (
@@ -415,7 +547,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
 
       {/* ── Pre-enchanted mode toggle ── */}
       <div style={{ marginBottom: 14 }}>
-        <button onClick={() => { setPreMode(p => !p); setExisting({}); setSel({}); setResult(null); }}
+        <button onClick={togglePreMode}
           style={{ padding: "7px 14px", borderRadius: 6, fontSize: 10, cursor: "pointer",
             fontFamily: "'IBM Plex Mono'",
             background: preMode ? "rgba(245,196,0,.08)" : T.s2,
@@ -591,6 +723,17 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
 
   const hasSel = entries.some(e => Object.keys(e.sel).length > 0);
 
+  useEffect(() => {
+    const onCommand = (e) => {
+      const action = e.detail?.action;
+      if (action === "set-add-item") add();
+      if (action === "set-calc" && hasSel) calcAll();
+      if (action === "set-clear-results") setResults({});
+    };
+    window.addEventListener("mc:command", onCommand);
+    return () => window.removeEventListener("mc:command", onCommand);
+  }, [add, calcAll, hasSel]);
+
   const savePreset = () => {
     if (!presetName.trim()) return;
     onSavePreset({ type: "set", name: presetName.trim(), entries: entries.map(e => ({ ...e })) });
@@ -736,6 +879,7 @@ let presetUid = 0;
 
 export default function App() {
   const [tab, setTab]         = useState("calc");
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const [edition, setEdition] = useState(() => localStorage.getItem("mc_edition") || "java");
   const [presets, setPresets] = useState(() => {
     try {
@@ -763,6 +907,13 @@ export default function App() {
     setLoadMsg(`Preset "${p.name}" loaded`); setTimeout(() => setLoadMsg(""), 2500);
   };
 
+  const runCommandAction = useCallback((targetTab, action) => {
+    setTab(targetTab);
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("mc:command", { detail: { action } }));
+    });
+  }, []);
+
   const tabs = [
     { id: "calc",      label: "⚒ CALCULATOR" },
     { id: "set",       label: "📦 SET BUILDER" },
@@ -773,6 +924,118 @@ export default function App() {
     { id: "changelog", label: "📋 CHANGELOG" },
     { id: "support",   label: "💬 SUPPORT" },
   ];
+
+  const commands = useMemo(() => ([
+    ...tabs.map(t => ({
+      id: `nav-${t.id}`,
+      group: "Navigation",
+      label: `Open ${t.label.replace(/^[^\s]+\s/, "")}`,
+      keywords: `${t.id} tab page`,
+      run: () => setTab(t.id),
+    })),
+    {
+      id: "edition-java",
+      group: "Game Mode",
+      label: "Switch to Java Edition",
+      hint: "☕ Java",
+      keywords: "java edition",
+      run: () => handleEdition("java"),
+    },
+    {
+      id: "edition-bedrock",
+      group: "Game Mode",
+      label: "Switch to Bedrock Edition",
+      hint: "🪨 Bedrock",
+      keywords: "bedrock edition",
+      run: () => handleEdition("bedrock"),
+    },
+    {
+      id: "single-calc",
+      group: "Calculator Actions",
+      label: "Calculate optimal order",
+      hint: "Space",
+      keywords: "calculate run solve",
+      run: () => runCommandAction("calc", "single-calc"),
+    },
+    {
+      id: "single-clear",
+      group: "Calculator Actions",
+      label: "Clear selected enchants and result",
+      hint: "Esc",
+      keywords: "reset clear",
+      run: () => runCommandAction("calc", "single-clear"),
+    },
+    {
+      id: "single-share",
+      group: "Calculator Actions",
+      label: "Copy share link for current build",
+      keywords: "share link url",
+      run: () => runCommandAction("calc", "single-share"),
+    },
+    {
+      id: "single-chart",
+      group: "Calculator Actions",
+      label: "Toggle XP breakdown chart",
+      keywords: "chart breakdown cost",
+      run: () => runCommandAction("calc", "single-toggle-chart"),
+    },
+    {
+      id: "single-preechanted",
+      group: "Calculator Actions",
+      label: "Toggle pre-enchanted mode",
+      keywords: "pre enchanted existing item",
+      run: () => runCommandAction("calc", "single-toggle-preechanted"),
+    },
+    {
+      id: "set-add",
+      group: "Set Builder Actions",
+      label: "Add item to set builder",
+      keywords: "add item set",
+      run: () => runCommandAction("set", "set-add-item"),
+    },
+    {
+      id: "set-calc",
+      group: "Set Builder Actions",
+      label: "Calculate set totals",
+      keywords: "calculate set total",
+      run: () => runCommandAction("set", "set-calc"),
+    },
+    {
+      id: "set-clear-results",
+      group: "Set Builder Actions",
+      label: "Clear set results panel",
+      keywords: "clear set results",
+      run: () => runCommandAction("set", "set-clear-results"),
+    },
+    ...(presets.length ? [{
+      id: "open-presets",
+      group: "Presets",
+      label: `Open presets (${presets.length} saved)`,
+      keywords: "saved presets",
+      run: () => setTab("presets"),
+    }] : []),
+  ]), [tabs, presets.length, handleEdition, runCommandAction]);
+
+  useEffect(() => {
+    const isTyping = (target) => {
+      const tag = target?.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || target?.isContentEditable;
+    };
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen(v => !v);
+      } else if (!isTyping(e.target) && e.key === "/") {
+        e.preventDefault();
+        setPaletteOpen(true);
+      } else if (e.key === "Escape" && paletteOpen) {
+        e.preventDefault();
+        setPaletteOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [paletteOpen]);
 
   return (
     <>
@@ -786,6 +1049,14 @@ export default function App() {
             <div style={{ marginTop: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
               <EditionToggle edition={edition} onChange={handleEdition} />
               <VersionBadge onClick={() => setTab("changelog")} />
+              <button onClick={() => setPaletteOpen(true)}
+                style={{
+                  fontFamily: "'IBM Plex Mono'", fontSize: 10, color: T.muted2,
+                  background: T.s2, border: `1px solid ${T.border}`, borderRadius: 6,
+                  padding: "5px 10px", cursor: "pointer"
+                }}>
+                ⌘K / Ctrl+K
+              </button>
             </div>
             {edition === "bedrock" && (
               <div style={{ marginTop: 8, fontSize: 10, color: T.bedrock, opacity: .8 }}>
@@ -818,6 +1089,7 @@ export default function App() {
           {tab === "changelog" && <Changelog />}
           {tab === "support"   && <Support />}
         </div>
+        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} commands={commands} />
       </div>
     </>
   );
