@@ -65,7 +65,7 @@ function EditionToggle({ edition, onChange }) {
   );
 }
 
-function CommandPalette({ open, onClose, commands }) {
+function CommandPalette({ onClose, commands }) {
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef(null);
@@ -79,20 +79,13 @@ function CommandPalette({ open, onClose, commands }) {
     });
   }, [commands, query]);
 
+  const normalizedIndex = filtered.length ? Math.min(activeIndex, filtered.length - 1) : 0;
+
   useEffect(() => {
-    if (!open) return;
-    setQuery("");
-    setActiveIndex(0);
     requestAnimationFrame(() => inputRef.current?.focus());
-  }, [open]);
+  }, []);
 
   useEffect(() => {
-    if (!filtered.length) { setActiveIndex(0); return; }
-    setActiveIndex(i => Math.min(i, filtered.length - 1));
-  }, [filtered]);
-
-  useEffect(() => {
-    if (!open) return;
     const onKey = (e) => {
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -103,7 +96,7 @@ function CommandPalette({ open, onClose, commands }) {
       } else if (e.key === "Enter") {
         if (!filtered.length) return;
         e.preventDefault();
-        filtered[activeIndex]?.run?.();
+        filtered[normalizedIndex]?.run?.();
         onClose();
       } else if (e.key === "Escape") {
         e.preventDefault();
@@ -112,11 +105,8 @@ function CommandPalette({ open, onClose, commands }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, filtered, activeIndex, onClose]);
+  }, [filtered, normalizedIndex, onClose]);
 
-  if (!open) return null;
-
-  let previousGroup = "";
   return (
     <div onClick={onClose}
       style={{
@@ -146,8 +136,7 @@ function CommandPalette({ open, onClose, commands }) {
             <div style={{ padding: "14px 14px", fontSize: 11, color: T.muted }}>No commands found for "{query}"</div>
           )}
           {filtered.map((c, i) => {
-            const showGroup = c.group !== previousGroup;
-            previousGroup = c.group;
+            const showGroup = i === 0 || filtered[i - 1].group !== c.group;
             return (
               <div key={c.id}>
                 {showGroup && (
@@ -160,10 +149,10 @@ function CommandPalette({ open, onClose, commands }) {
                 )}
                 <button onClick={() => { c.run?.(); onClose(); }}
                   style={{
-                    width: "100%", textAlign: "left", border: "none", background: i === activeIndex ? "rgba(166,110,255,.16)" : "transparent",
-                    borderTop: `1px solid ${i === activeIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
-                    borderBottom: `1px solid ${i === activeIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
-                    color: i === activeIndex ? "#efe4ff" : T.text, padding: "10px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 12
+                    width: "100%", textAlign: "left", border: "none", background: i === normalizedIndex ? "rgba(166,110,255,.16)" : "transparent",
+                    borderTop: `1px solid ${i === normalizedIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
+                    borderBottom: `1px solid ${i === normalizedIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
+                    color: i === normalizedIndex ? "#efe4ff" : T.text, padding: "10px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 12
                   }}>
                   <span style={{ fontSize: 12, flex: 1 }}>{c.label}</span>
                   {c.hint && <span style={{ fontSize: 10, color: T.muted }}>{c.hint}</span>}
@@ -513,11 +502,11 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
     setPresetName(""); setSaved(true); setTimeout(() => setSaved(false), 2000);
   };
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     navigator.clipboard.writeText(buildShareURL(itemId, sel)).then(() => {
       setShareMsg("🔗 link copied!"); setTimeout(() => setShareMsg(""), 2500);
     });
-  };
+  }, [itemId, sel]);
 
   useEffect(() => {
     const onCommand = (e) => {
@@ -705,16 +694,16 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
   const [saved, setSaved]       = useState(false);
   const resultsRef = useRef(null);
 
-  const update = (uid, data) => setEntries(es => es.map(e => e.uid === uid ? data : e));
-  const remove = uid => setEntries(es => es.filter(e => e.uid !== uid));
-  const add    = () => setEntries(es => [...es, newEntry()]);
+  const update = useCallback((uid, data) => setEntries(es => es.map(e => e.uid === uid ? data : e)), []);
+  const remove = useCallback(uid => setEntries(es => es.filter(e => e.uid !== uid)), []);
+  const add    = useCallback(() => setEntries(es => [...es, newEntry()]), []);
 
-  const calcAll = () => {
+  const calcAll = useCallback(() => {
     const r = {};
     entries.forEach(e => { if (Object.keys(e.sel).length) { const item = ITEMS.find(i => i.id === e.itemId); const t0 = performance.now(); const res = solve(e.sel, item.name); res.timeMs = performance.now() - t0; r[e.uid] = res; } });
     setResults(r);
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-  };
+  }, [entries]);
 
   const totalXp = Object.entries(results).reduce((sum, [uid, res]) => {
     const entry = entries.find(e => e.uid === parseInt(uid) || e.uid == uid);
@@ -892,7 +881,7 @@ export default function App() {
   const [loadedPreset, setLoadedPreset] = useState(null);
   const [loadMsg, setLoadMsg] = useState("");
 
-  const handleEdition = (ed) => { setEdition(ed); localStorage.setItem("mc_edition", ed); };
+  const handleEdition = useCallback((ed) => { setEdition(ed); localStorage.setItem("mc_edition", ed); }, []);
 
   const savePreset = useCallback((preset) => {
     setPresets(ps => { const updated = [...ps, { ...preset, id: ++presetUid, createdAt: Date.now() }]; localStorage.setItem("mc_presets", JSON.stringify(updated)); return updated; });
@@ -914,7 +903,7 @@ export default function App() {
     });
   }, []);
 
-  const tabs = [
+  const tabs = useMemo(() => [
     { id: "calc",      label: "⚒ CALCULATOR" },
     { id: "set",       label: "📦 SET BUILDER" },
     { id: "presets",   label: `💾 PRESETS${presets.length ? ` (${presets.length})` : ""}` },
@@ -923,7 +912,7 @@ export default function App() {
     { id: "wiki",      label: "📚 WIKI" },
     { id: "changelog", label: "📋 CHANGELOG" },
     { id: "support",   label: "💬 SUPPORT" },
-  ];
+  ], [presets.length]);
 
   const commands = useMemo(() => ([
     ...tabs.map(t => ({
@@ -1089,7 +1078,7 @@ export default function App() {
           {tab === "changelog" && <Changelog />}
           {tab === "support"   && <Support />}
         </div>
-        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} commands={commands} />
+        {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} commands={commands} />}
       </div>
     </>
   );
