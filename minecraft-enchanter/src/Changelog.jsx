@@ -22,9 +22,18 @@ const TAG_COLORS = {
 
 const CHANGELOG = [
   {
+    version: "2.1.0",
+    date: "2026-05-12",
+    label: "latest",
+    entries: [
+      { tag: "new", text: "Global command palette — press Ctrl/Cmd+K (or /) to open a universal command menu with instant search and keyboard navigation." },
+      { tag: "improved", text: "Command coverage now spans core app workflows: full tab navigation, Java/Bedrock mode switching, calculator actions (calculate, clear, share, chart toggle, pre-enchanted toggle), and set-builder actions (add item, calculate set, clear set results)." },
+      { tag: "design", text: "Added a polished quick-access launcher UI with grouped commands and highlighted selection states for fast power-user navigation." }
+    ]
+  },
+  {
     version: "2.0.1",
     date: "2026-04-19",
-    label: "latest",
     entries: [
       { tag: "improved", text: "Global responsiveness audit — refined layouts across all tabs for mobile and tablet screens, ensuring a seamless experience regardless of device size." },
       { tag: "design", text: "Wiki UI overhaul — replaced native select elements with custom premium dropdowns and implemented a custom tooltip system for enchantment tags, removing default browser tooltip reliance." }
@@ -169,7 +178,7 @@ function Tag({ type }) {
 }
 
 export default function Changelog() {
-  const [expanded, setExpanded] = useState("2.0.1");
+  const [expanded, setExpanded] = useState("2.1.0");
 
   return (
     <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>

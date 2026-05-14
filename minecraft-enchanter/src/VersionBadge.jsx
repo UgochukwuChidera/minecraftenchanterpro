@@ -3,7 +3,7 @@
 // Usage: import VersionBadge from "./VersionBadge";
 //        <VersionBadge />  or  <VersionBadge onClick={() => setTab("changelog")} />
 
-export const APP_VERSION = "2.0.1";
+export const APP_VERSION = "2.1.0";
 
 export default function VersionBadge({ onClick }) {
   return (
@@ -47,4 +47,4 @@ export default function VersionBadge({ onClick }) {
       v{APP_VERSION}
     </span>
   );
-}
+}
