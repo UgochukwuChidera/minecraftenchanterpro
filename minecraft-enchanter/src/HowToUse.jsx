@@ -2,14 +2,7 @@
 //  HOW TO USE  — standalone guide component
 // ═══════════════════════════════════════════════════════════
 import { useState } from "react";
-
-const T = {
-  bg: "#080808", surface: "#0f0f0f", s2: "#111111", s3: "#161616",
-  border: "#1e1e1e", b2: "#252525",
-  accent: "#a66eff", accentBg: "rgba(166,110,255,0.08)",
-  text: "#e0e0e0", muted: "#555", muted2: "#888",
-  green: "#4ade80", red: "#f87171", yellow: "#fbbf24", blue: "#93c5fd", orange: "#fb923c",
-};
+import { T, F } from "./theme.js";
 
 const SECTIONS = [
   {
@@ -163,7 +156,7 @@ function Table({ headers, rows }) {
           <tr>{headers.map((h, i) => (
             <th key={i} style={{ padding: "7px 10px", background: "#0d0d0d",
               border: `1px solid ${T.border}`, color: T.accent,
-              fontFamily: "'Press Start 2P'", fontSize: 7, textAlign: "left", whiteSpace: "nowrap" }}>{h}</th>
+              fontFamily: F.display, fontSize: 7, textAlign: "left", whiteSpace: "nowrap" }}>{h}</th>
           ))}</tr>
         </thead>
         <tbody>
@@ -187,7 +180,7 @@ function StepBlock({ num, title, text }) {
       <div style={{ width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
         background: T.accentBg, border: "1.5px solid rgba(166,110,255,.3)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontFamily: "'Press Start 2P'", fontSize: 8, color: T.accent, marginTop: 1 }}>{num}</div>
+        fontFamily: F.display, fontSize: 8, color: T.accent, marginTop: 1 }}>{num}</div>
       <div>
         <div style={{ fontSize: 12, color: T.text, fontWeight: 600, marginBottom: 3 }}>{title}</div>
         <div style={{ fontSize: 11, color: T.muted2, lineHeight: 1.7 }}>{text}</div>
@@ -211,7 +204,7 @@ export default function HowToUse() {
   const section = SECTIONS.find(s => s.id === active);
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+    <div className="font-body">
       <style>{`
         .guide-nav-btn { transition: all .12s; cursor: pointer; }
         .guide-nav-btn:hover { background: rgba(166,110,255,.1) !important; }
@@ -225,7 +218,7 @@ export default function HowToUse() {
               background: active === s.id ? T.accentBg : T.s2,
               color: active === s.id ? T.accent : T.muted,
               border: `1px solid ${active === s.id ? "rgba(166,110,255,.3)" : T.border}`,
-              fontSize: 11, fontFamily: "'IBM Plex Mono'",
+              fontSize: 11, fontFamily: F.body,
             }}>{s.icon} {s.title}</button>
         ))}
       </div>
@@ -234,7 +227,7 @@ export default function HowToUse() {
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16,
           paddingBottom: 12, borderBottom: `1px solid ${T.border}` }}>
           <span style={{ fontSize: 22 }}>{section.icon}</span>
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent }}>{section.title}</span>
+          <span style={{ fontFamily: F.display, fontSize: 10, color: T.accent }}>{section.title}</span>
         </div>
 
         {section.content.map((block, i) => {

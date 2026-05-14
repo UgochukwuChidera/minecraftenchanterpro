@@ -1,4 +1,4 @@
-import { T } from "./theme.js";
+import { T, F } from "./theme.js";
 import { E } from "./data.js";
 import { rom } from "./solver.js";
 
@@ -34,7 +34,7 @@ export default function CostChart({ sel }) {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         marginBottom: 10,
       }}>
-        <span style={{ fontFamily: "'Press Start 2P'", fontSize: 7, color: T.accent }}>
+        <span style={{ fontFamily: F.display, fontSize: 7, color: T.accent }}>
           XP COST BREAKDOWN
         </span>
         <span style={{ fontSize: 10, color: T.muted }}>
@@ -57,7 +57,7 @@ export default function CostChart({ sel }) {
                 <span style={{ fontSize: 9, color: T.muted, minWidth: 52, textAlign: "right" }}>
                   ×{mult}{E[id].maxLvl > 1 ? `×${lvl}` : ""} = {cost}
                 </span>
-                <span style={{ fontSize: 9, color, fontFamily: "'Press Start 2P'", minWidth: 32, textAlign: "right" }}>
+                <span style={{ fontSize: 9, color, fontFamily: F.display, minWidth: 32, textAlign: "right" }}>
                   {pct}%
                 </span>
               </div>

@@ -2,14 +2,7 @@
 //  CHANGELOG  — standalone component
 // ═══════════════════════════════════════════════════════════
 import { useState } from "react";
-
-const T = {
-  bg: "#080808", surface: "#0f0f0f", s2: "#111111", s3: "#161616",
-  border: "#1e1e1e",
-  accent: "#a66eff", accentBg: "rgba(166,110,255,0.08)",
-  text: "#e0e0e0", muted: "#555", muted2: "#888",
-  green: "#4ade80", red: "#f87171", yellow: "#fbbf24", blue: "#93c5fd", orange: "#fb923c",
-};
+import { T, F } from "./theme.js";
 
 const TAG_COLORS = {
   new: { bg: "rgba(74,222,128,.1)", border: "rgba(74,222,128,.25)", text: "#4ade80" },
@@ -172,7 +165,7 @@ function Tag({ type }) {
     <span style={{
       fontSize: 8, padding: "2px 6px", borderRadius: 4,
       background: c.bg, border: `1px solid ${c.border}`, color: c.text,
-      fontFamily: "'Press Start 2P'", flexShrink: 0, lineHeight: 1.8
+      fontFamily: F.display, flexShrink: 0, lineHeight: 1.8
     }}>{labels[type] || type.toUpperCase()}</span>
   );
 }
@@ -181,7 +174,7 @@ export default function Changelog() {
   const [expanded, setExpanded] = useState("2.1.0");
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+    <div className="font-body">
       <style>{`
         .cl-card { transition: border-color .15s; }
         .cl-card:hover { border-color: rgba(166,110,255,.3) !important; }
@@ -191,7 +184,7 @@ export default function Changelog() {
         marginBottom: 20, padding: "14px 18px", background: T.surface,
         border: `1px solid ${T.border}`, borderRadius: 10
       }}>
-        <div style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: T.accent, marginBottom: 8 }}>
+        <div style={{ fontFamily: F.display, fontSize: 9, color: T.accent, marginBottom: 8 }}>
           RELEASE HISTORY
         </div>
         <p style={{ fontSize: 11, color: T.muted2, lineHeight: 1.7 }}>
@@ -217,7 +210,7 @@ export default function Changelog() {
                   cursor: "pointer", userSelect: "none"
                 }}>
                 <div style={{
-                  fontFamily: "'Press Start 2P'", fontSize: 10,
+                  fontFamily: F.display, fontSize: 10,
                   color: isOpen ? T.accent : T.muted2, minWidth: 60
                 }}>
                   v{release.version}
@@ -227,7 +220,7 @@ export default function Changelog() {
                   <span style={{
                     fontSize: 8, padding: "2px 7px", borderRadius: 4,
                     background: "rgba(74,222,128,.1)", border: "1px solid rgba(74,222,128,.25)",
-                    color: T.green, fontFamily: "'Press Start 2P'"
+                    color: T.green, fontFamily: F.display
                   }}>LATEST</span>
                 )}
                 <div style={{ flex: 1 }} />

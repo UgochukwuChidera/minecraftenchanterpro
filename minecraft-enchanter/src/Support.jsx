@@ -7,7 +7,7 @@
 //    3. Copy the key and replace WEB3FORMS_KEY below
 // ═══════════════════════════════════════════════════════════
 import { useState, useEffect, useRef, useCallback } from "react";
-import { T } from "./theme.js";
+import { T, F } from "./theme.js";
 
 const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY"; // ← paste your key here
 const POLL_INTERVAL = 8000; // ms between online checks when offline
@@ -22,7 +22,7 @@ function Toast({ toasts }) {
       {toasts.map(t => (
         <div key={t.id} style={{
           padding: "10px 16px", borderRadius: 8, fontSize: 11,
-          fontFamily: "'IBM Plex Mono'", maxWidth: 300,
+          fontFamily: F.body, maxWidth: 300,
           background: t.type === "success" ? "rgba(74,222,128,.12)"
                     : t.type === "error"   ? "rgba(239,68,68,.12)"
                     : t.type === "online"  ? "rgba(74,222,128,.1)"
@@ -175,7 +175,7 @@ export default function Support() {
 
       {/* ── Header ── */}
       <div style={{ marginBottom: 20, padding: "14px 16px", background: T.s2, border: `1px solid ${T.border}`, borderRadius: 9 }}>
-        <div style={{ fontSize: 12, color: T.text, marginBottom: 6, fontFamily: "'Press Start 2P'" }}>💬 SEND FEEDBACK</div>
+        <div style={{ fontSize: 12, color: T.text, marginBottom: 6, fontFamily: F.display }}>💬 SEND FEEDBACK</div>
         <div style={{ fontSize: 11, color: T.muted, lineHeight: 1.7 }}>
           Found a bug? Got an idea for a feature? Something feels off? Send it directly — every message goes to the developer's inbox.
         </div>
@@ -183,13 +183,13 @@ export default function Support() {
 
       {/* ── Type selector ── */}
       <div style={{ marginBottom: 16 }}>
-        <label style={{ display: "block", fontSize: 10, color: T.muted, marginBottom: 6, fontFamily: "'Press Start 2P'" }}>TYPE</label>
+        <label style={{ display: "block", fontSize: 10, color: T.muted, marginBottom: 6, fontFamily: F.display }}>TYPE</label>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {TYPES.map(t => (
             <button key={t.id} onClick={() => set("type", t.id)}
               style={{
                 padding: "7px 14px", borderRadius: 6, cursor: "pointer",
-                fontSize: 11, fontFamily: "'IBM Plex Mono'",
+                fontSize: 11, fontFamily: F.body,
                 background: form.type === t.id ? `${t.color}18` : T.s2,
                 border:     `1px solid ${form.type === t.id ? t.color : T.border}`,
                 color:      form.type === t.id ? t.color : T.muted,
@@ -244,7 +244,7 @@ export default function Support() {
               : "linear-gradient(135deg,#5f1fd4,#a66eff)",
             color: (!online || !form.name.trim() || !form.message.trim()) ? "#333" : "#fff",
             border: `1.5px solid ${(!online || !form.name.trim() || !form.message.trim()) ? T.border : T.accent}`,
-            fontFamily: "'Press Start 2P'", fontSize: 10, letterSpacing: 1,
+            fontFamily: F.display, fontSize: 10, letterSpacing: 1,
             boxShadow: (!online || !form.name.trim() || !form.message.trim()) ? "none" : "0 4px 20px rgba(166,110,255,.25)",
             opacity: sending ? 0.7 : 1,
           }}>
@@ -286,14 +286,14 @@ const PLACEHOLDERS = {
 
 const labelStyle = {
   display: "block", fontSize: 9, color: "#555",
-  fontFamily: "'Press Start 2P'", marginBottom: 5, letterSpacing: 0.5,
+  fontFamily: F.display, marginBottom: 5, letterSpacing: 0.5,
 };
 
 const inputStyle = {
   width: "100%", background: "#0e0e1a",
   border: "1px solid #1e1e2e", borderRadius: 6,
   padding: "8px 10px", fontSize: 12, color: "#e0e0e0",
-  outline: "none", fontFamily: "'IBM Plex Mono'",
+  outline: "none", fontFamily: F.body,
   boxSizing: "border-box",
   transition: "border-color .15s",
 };

@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { E, ITEMS } from "./data.js";
 import { rom, solve, parseShareURL, buildShareURL, exportSteps } from "./solver.js";
-import { T, CSS } from "./theme.js";
+import { T, CSS, F } from "./theme.js";
 import CostChart from "./CostChart.jsx";
 import MaterialCalc from "./MaterialCalc.jsx";
 import HowToUse from "./HowToUse.jsx";
@@ -33,9 +33,9 @@ function Sec({ label, title, children, action }) {
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18, marginBottom: 16 }}>
       <div className="sec-header" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-        {label && <span style={{ fontFamily: "'Press Start 2P'", fontSize: 7, color: "#333" }}>{label}</span>}
+        {label && <span className="sec-label">{label}</span>}
         <div className="spacer" style={{ flex: 1, height: 1, background: T.border }} />
-        <span style={{ fontFamily: "'Press Start 2P'", fontSize: 8, color: T.accent }}>{title}</span>
+        <span className="sec-title">{title}</span>
         {action}
       </div>
       {children}
@@ -53,7 +53,7 @@ function EditionToggle({ edition, onChange }) {
         <button key={opt.id} className="edition-btn" onClick={() => onChange(opt.id)}
           style={{
             padding: "5px 12px", borderRadius: 4, fontSize: 10, cursor: "pointer",
-            fontFamily: "'IBM Plex Mono'",
+            fontFamily: F.body,
             background: edition === opt.id ? `${opt.color}18` : "transparent",
             color: edition === opt.id ? opt.color : T.muted,
             border: `1px solid ${edition === opt.id ? opt.color : "transparent"}`,
@@ -108,54 +108,37 @@ function CommandPalette({ onClose, commands }) {
   }, [filtered, normalizedIndex, onClose]);
 
   return (
-    <div onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, zIndex: 1200, background: "rgba(0,0,0,.68)",
-        backdropFilter: "blur(4px)", padding: 14, display: "flex", alignItems: "flex-start", justifyContent: "center"
-      }}>
-      <div onClick={e => e.stopPropagation()}
-        style={{
-          marginTop: "min(14vh, 100px)", width: "min(760px, 100%)", maxHeight: "72vh",
-          background: "#070707", border: `1px solid ${T.border}`, borderRadius: 12, overflow: "hidden",
-          boxShadow: "0 24px 64px rgba(0,0,0,.65)"
-        }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 12px", borderBottom: `1px solid ${T.border}` }}>
+    <div onClick={onClose} className="cmd-palette-root">
+      <div onClick={e => e.stopPropagation()} className="cmd-palette-card">
+        <div className="cmd-palette-header">
           <span style={{ color: T.muted, fontSize: 12 }}>🔍</span>
           <input
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Type a command or search..."
-            style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: T.text, fontSize: 12, fontFamily: "'IBM Plex Mono'" }}
+            className="cmd-palette-input"
           />
-          <button onClick={onClose} style={{ border: "none", background: "none", color: T.muted, fontSize: 16, cursor: "pointer", lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} className="cmd-palette-close">✕</button>
         </div>
 
-        <div style={{ overflowY: "auto", maxHeight: "calc(72vh - 54px)", padding: "8px 0" }}>
+        <div className="cmd-palette-list">
           {!filtered.length && (
-            <div style={{ padding: "14px 14px", fontSize: 11, color: T.muted }}>No commands found for "{query}"</div>
+            <div className="cmd-palette-empty">No commands found for "{query}"</div>
           )}
           {filtered.map((c, i) => {
             const showGroup = i === 0 || filtered[i - 1].group !== c.group;
             return (
               <div key={c.id}>
                 {showGroup && (
-                  <div style={{
-                    padding: "10px 14px 4px", fontSize: 9, color: "#646464",
-                    fontFamily: "'Press Start 2P'", letterSpacing: .5
-                  }}>
+                  <div className="cmd-palette-group">
                     {c.group}
                   </div>
                 )}
                 <button onClick={() => { c.run?.(); onClose(); }}
-                  style={{
-                    width: "100%", textAlign: "left", border: "none", background: i === normalizedIndex ? "rgba(166,110,255,.16)" : "transparent",
-                    borderTop: `1px solid ${i === normalizedIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
-                    borderBottom: `1px solid ${i === normalizedIndex ? "rgba(166,110,255,.25)" : "transparent"}`,
-                    color: i === normalizedIndex ? "#efe4ff" : T.text, padding: "10px 14px", cursor: "pointer", display: "flex", alignItems: "center", gap: 12
-                  }}>
-                  <span style={{ fontSize: 12, flex: 1 }}>{c.label}</span>
-                  {c.hint && <span style={{ fontSize: 10, color: T.muted }}>{c.hint}</span>}
+                  className={`cmd-palette-row${i === normalizedIndex ? " active" : ""}`}>
+                  <span className="cmd-palette-label">{c.label}</span>
+                  {c.hint && <span className="cmd-palette-hint">{c.hint}</span>}
                 </button>
               </div>
             );
@@ -173,13 +156,13 @@ function WikiPanel({ id, edition }) {
   return (
     <div className="wiki-panel" style={{ margin: "6px 0 2px 28px", padding: "12px 14px", background: "#0a0818", border: `1px solid rgba(166,110,255,0.2)`, borderRadius: 8 }}>
       {enc.javaOnly && edition === "java" && (
-        <div style={{ marginBottom: 8, fontSize: 9, color: T.java, fontFamily: "'Press Start 2P'" }}>☕ JAVA EDITION ONLY</div>
+        <div style={{ marginBottom: 8, fontSize: 9, color: T.java, fontFamily: F.display }}>☕ JAVA EDITION ONLY</div>
       )}
       <p style={{ fontSize: 12, color: T.muted2, marginBottom: 8, lineHeight: 1.6 }}>{desc}</p>
       <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 8 }}>
         {enc.levels.map((l, i) => (
           <div key={i} style={{ display: "flex", gap: 8, fontSize: 11 }}>
-            <span style={{ color: T.accent, fontFamily: "'Press Start 2P'", fontSize: 7, minWidth: 14, paddingTop: 2 }}>{i + 1}</span>
+            <span style={{ color: T.accent, fontFamily: F.display, fontSize: 7, minWidth: 14, paddingTop: 2 }}>{i + 1}</span>
             <span style={{ color: "#ccc" }}>{l}</span>
           </div>
         ))}
@@ -229,7 +212,7 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
       {item.enc.length >= 6 && (
         <div style={{ marginBottom: 8, position: "relative" }}>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 filter enchants..."
-            style={{ width: "100%", background: T.s3, border: `1px solid ${T.border}`, borderRadius: 6, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} />
+            style={{ width: "100%", background: T.s3, border: `1px solid ${T.border}`, borderRadius: 6, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: F.body }} />
           {search && (
             <button onClick={() => setSearch("")}
               style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 13 }}>✕</button>
@@ -266,20 +249,20 @@ function EnchantPicker({ item, sel, onChange, edition, tint }) {
                     <span 
                       className="tooltip-trigger" 
                       data-tooltip="Java Edition only — this enchantment does not exist in Bedrock Edition." 
-                      style={{ fontSize: 7, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: "'Press Start 2P'", opacity: .8 }}
+                      style={{ fontSize: 7, color: T.java, marginLeft: 6, padding: "1px 5px", border: `1px solid ${T.java}44`, borderRadius: 3, fontFamily: F.display, opacity: .8 }}
                     >
                       JAVA
                     </span>
                   )}
                 </span>
                 <button className="icon-btn" onClick={e => { e.stopPropagation(); setOpenWiki(wikiOpen ? null : id); }}
-                  style={{ fontSize: 11, color: wikiOpen ? T.accent : "#333", padding: "0 4px", lineHeight: 1, fontFamily: "'IBM Plex Mono'" }}>ⓘ</button>
+                  style={{ fontSize: 11, color: wikiOpen ? T.accent : "#333", padding: "0 4px", lineHeight: 1, fontFamily: F.body }}>ⓘ</button>
                 <span style={{ fontSize: 10, color: "#2a2a2a", minWidth: 38, textAlign: "right" }}>×{enc.mult}</span>
                 {enc.maxLvl > 1 && (
                   <div className="lvl-container" style={{ display: "flex", gap: 3 }} onClick={e => e.stopPropagation()}>
                     {Array.from({ length: enc.maxLvl }, (_, i) => i + 1).map(lvl => (
                       <button key={lvl} className="lvbtn" onClick={() => { if (!active) toggle(id); setLvl(id, lvl); }}
-                        style={{ width: 24, height: 22, borderRadius: 4, fontSize: 8, fontFamily: "'Press Start 2P'", background: (active && sel[id] === lvl) ? T.accent : "#1a1a1a", color: (active && sel[id] === lvl) ? "#fff" : "#444" }}>{rom(lvl)}</button>
+                        style={{ width: 24, height: 22, borderRadius: 4, fontSize: 8, fontFamily: F.display, background: (active && sel[id] === lvl) ? T.accent : "#1a1a1a", color: (active && sel[id] === lvl) ? "#fff" : "#444" }}>{rom(lvl)}</button>
                     ))}
                   </div>
                 )}
@@ -315,7 +298,7 @@ function ResultSteps({ result, item, compact }) {
             {compact && (collapsed ? " — click to expand" : " — click to collapse")}
           </span>
           {result.timeMs !== undefined && (
-            <span className="tooltip-trigger" data-tooltip="Internal calculation time for finding the provably optimal combining sequence using DP. (Usually <1ms for 1-5 enchants)" style={{ fontSize: 9, color: T.muted2, fontFamily: "'IBM Plex Mono'", background: T.s3, padding: "2px 6px", borderRadius: 4, border: `1px solid ${T.border}` }}>
+            <span className="tooltip-trigger" data-tooltip="Internal calculation time for finding the provably optimal combining sequence using DP. (Usually <1ms for 1-5 enchants)" style={{ fontSize: 9, color: T.muted2, fontFamily: F.body, background: T.s3, padding: "2px 6px", borderRadius: 4, border: `1px solid ${T.border}` }}>
               ⏱ {result.timeMs < 1 ? "<1" : result.timeMs.toFixed(0)}ms
             </span>
           )}
@@ -323,11 +306,11 @@ function ResultSteps({ result, item, compact }) {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {!compact && (
             <button className="copy-btn" onClick={handleExport}
-              style={{ padding: "3px 9px", borderRadius: 5, fontSize: 9, background: copied ? "rgba(74,222,128,.12)" : "rgba(255,255,255,.04)", border: `1px solid ${copied ? T.green : T.border}`, color: copied ? T.green : T.muted, fontFamily: "'IBM Plex Mono'", cursor: "pointer" }}>
+              style={{ padding: "3px 9px", borderRadius: 5, fontSize: 9, background: copied ? "rgba(74,222,128,.12)" : "rgba(255,255,255,.04)", border: `1px solid ${copied ? T.green : T.border}`, color: copied ? T.green : T.muted, fontFamily: F.body, cursor: "pointer" }}>
               {copied ? "✓ copied" : "📋 export"}
             </button>
           )}
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: result.tooExpensive ? T.red : T.green, textShadow: `0 0 10px ${result.tooExpensive ? "rgba(248,113,113,.4)" : "rgba(74,222,128,.3)"}` }}>
+          <span style={{ fontFamily: F.display, fontSize: 9, color: result.tooExpensive ? T.red : T.green, textShadow: `0 0 10px ${result.tooExpensive ? "rgba(248,113,113,.4)" : "rgba(74,222,128,.3)"}` }}>
             {result.tooExpensive ? "⚠ TOO EXPENSIVE" : `${result.total} LEVELS`}
           </span>
         </div>
@@ -336,7 +319,7 @@ function ResultSteps({ result, item, compact }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {result.steps.map((step, i) => (
             <div key={step.num} className="step" style={{ animationDelay: `${i * .05}s`, background: step.isFinal ? "#0d0a18" : T.s2, border: `1.5px solid ${step.sc > 39 ? "#7f1d1d" : step.isFinal ? "rgba(166,110,255,.3)" : T.border}`, borderRadius: 7, padding: "10px 12px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <div style={{ width: 26, height: 26, borderRadius: "50%", flexShrink: 0, background: step.isFinal ? T.accent : "#191919", border: `1.5px solid ${step.isFinal ? T.accent : "#2a2a2a"}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Press Start 2P'", fontSize: 8, color: step.isFinal ? "#fff" : T.muted }}>{step.num}</div>
+              <div style={{ width: 26, height: 26, borderRadius: "50%", flexShrink: 0, background: step.isFinal ? T.accent : "#191919", border: `1.5px solid ${step.isFinal ? T.accent : "#2a2a2a"}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: F.display, fontSize: 8, color: step.isFinal ? "#fff" : T.muted }}>{step.num}</div>
               <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", fontSize: 11 }}>
                 <span style={{ background: "#0d1f14", border: "1px solid #1a3320", borderRadius: 4, padding: "2px 7px", color: "#86efac" }}>{step.tl}</span>
                 <span style={{ color: "#333" }}>+</span>
@@ -345,9 +328,9 @@ function ResultSteps({ result, item, compact }) {
                 <span style={{ color: step.isFinal ? "#c4a3ff" : T.muted, fontStyle: step.isFinal ? "italic" : "normal" }}>{step.isFinal ? `✨ ${item.name}` : "combined book"}</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3, flexShrink: 0 }}>
-                <div style={{ background: step.sc > 39 ? "#2d0707" : "#1a1300", border: `1px solid ${step.sc > 39 ? "#7f1d1d" : "#3d3300"}`, borderRadius: 5, padding: "3px 8px", fontFamily: "'Press Start 2P'", fontSize: 8, color: step.sc > 39 ? T.red : T.yellow }}>{step.sc} lvls</div>
+                <div style={{ background: step.sc > 39 ? "#2d0707" : "#1a1300", border: `1px solid ${step.sc > 39 ? "#7f1d1d" : "#3d3300"}`, borderRadius: 5, padding: "3px 8px", fontFamily: F.display, fontSize: 8, color: step.sc > 39 ? T.red : T.yellow }}>{step.sc} lvls</div>
                 {(step.penTgt > 0 || step.penSac > 0) && (
-                  <div className="tooltip-trigger" data-tooltip={`Prior work penalty cost for this step:\nItem: +${step.penTgt} lvl\nSacrifice: +${step.penSac} lvl\n\nPenalties double each time an item passes through an anvil.`} style={{ fontSize: 9, color: "#2d2d2d", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>
+                  <div className="tooltip-trigger" data-tooltip={`Prior work penalty cost for this step:\nItem: +${step.penTgt} lvl\nSacrifice: +${step.penSac} lvl\n\nPenalties double each time an item passes through an anvil.`} style={{ fontSize: 9, color: "#2d2d2d", fontFamily: F.body, whiteSpace: "nowrap" }}>
                     {[step.penTgt > 0 && `⚠ ${step.penTgt}`, step.penSac > 0 && `⚠ ${step.penSac}`].filter(Boolean).join(" + ")} prior
                   </div>
                 )}
@@ -373,7 +356,7 @@ function ItemGrid({ value, onChange }) {
     <div>
       {recent.length > 0 && (
         <div style={{ marginBottom: 10 }}>
-          <div style={{ fontSize: 9, color: T.muted, fontFamily: "'Press Start 2P'", marginBottom: 6 }}>RECENTLY USED</div>
+          <div style={{ fontSize: 9, color: T.muted, fontFamily: F.display, marginBottom: 6 }}>RECENTLY USED</div>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {recent.map(id => {
               const it = ITEMS.find(i => i.id === id);
@@ -398,7 +381,7 @@ function ItemGrid({ value, onChange }) {
           <div style={{ height: 1, background: T.border, margin: "10px 0" }} />
         </div>
       )}
-      <div style={{ fontSize: 9, color: T.muted, fontFamily: "'Press Start 2P'", marginBottom: 8 }}>ALL ITEMS</div>
+      <div style={{ fontSize: 9, color: T.muted, fontFamily: F.display, marginBottom: 8 }}>ALL ITEMS</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(72px,1fr))", gap: 6 }}>
         {ITEMS.map(it => (
           <div key={it.id} className="item-btn" onClick={() => handlePick(it.id)}
@@ -408,7 +391,7 @@ function ItemGrid({ value, onChange }) {
                 ? <img src={it.icon} alt={it.name} style={{ width: 26, height: 26, objectFit: "contain", imageRendering: "crisp-edges" }} />
                 : it.em}
             </div>
-            <div style={{ marginTop: 4, fontSize: 7, color: value === it.id ? "#c4a3ff" : "#555", fontFamily: "'Press Start 2P'", lineHeight: 1.6 }}>{it.name.toUpperCase()}</div>
+            <div style={{ marginTop: 4, fontSize: 7, color: value === it.id ? "#c4a3ff" : "#555", fontFamily: F.display, lineHeight: 1.6 }}>{it.name.toUpperCase()}</div>
           </div>
         ))}
       </div>
@@ -425,7 +408,7 @@ function WorkCountPicker({ value, onChange }) {
       <div style={{ display: "flex", gap: 3 }}>
         {[0,1,2,3,4,5].map(n => (
           <button key={n} onClick={() => onChange(n)}
-            style={{ width: 26, height: 22, borderRadius: 4, fontSize: 9, fontFamily: "'Press Start 2P'",
+            style={{ width: 26, height: 22, borderRadius: 4, fontSize: 9, fontFamily: F.display,
               cursor: "pointer", lineHeight: 1,
               background: value === n ? "rgba(245,196,0,.2)" : T.s3,
               color:      value === n ? T2.yellow : T.muted2,
@@ -433,7 +416,7 @@ function WorkCountPicker({ value, onChange }) {
             }}>{n}</button>
         ))}
       </div>
-      <span style={{ fontSize: 10, color: T.muted, fontFamily: "'IBM Plex Mono'" }}>
+      <span style={{ fontSize: 10, color: T.muted, fontFamily: F.body }}>
         = +{Math.pow(2, value) - 1} lvl penalty
       </span>
     </div>
@@ -538,7 +521,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
       <div style={{ marginBottom: 14 }}>
         <button onClick={togglePreMode}
           style={{ padding: "7px 14px", borderRadius: 6, fontSize: 10, cursor: "pointer",
-            fontFamily: "'IBM Plex Mono'",
+            fontFamily: F.body,
             background: preMode ? "rgba(245,196,0,.08)" : T.s2,
             border:     `1px solid ${preMode ? "rgba(245,196,0,.3)" : T.border}`,
             color:      preMode ? "#f5c400" : T.muted,
@@ -584,9 +567,9 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
         action={
           <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
             <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="preset name..."
-              style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "4px 8px", fontSize: 11, color: T.text, outline: "none", width: 130, maxWidth: "100%", fontFamily: "'IBM Plex Mono'" }} />
+              style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "4px 8px", fontSize: 11, color: T.text, outline: "none", width: 130, maxWidth: "100%", fontFamily: F.body }} />
             <button onClick={savePreset} disabled={!presetName.trim() || !count}
-              style={{ background: saved ? "rgba(74,222,128,.15)" : "rgba(166,110,255,.12)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "4px 10px", fontSize: 10, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'" }}>
+              style={{ background: saved ? "rgba(74,222,128,.15)" : "rgba(166,110,255,.12)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "4px 10px", fontSize: 10, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: F.body }}>
               {saved ? "✓ saved" : "💾 save"}
             </button>
           </div>
@@ -597,7 +580,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
               style={{ background: showChart ? T.accentBg : "transparent",
                 border: `1px solid ${showChart ? "rgba(166,110,255,.2)" : T.border}`,
                 borderRadius: 5, padding: "4px 10px", fontSize: 10,
-                color: showChart ? T.accent : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'" }}>
+                color: showChart ? T.accent : T.muted, cursor: "pointer", fontFamily: F.body }}>
               📊 {showChart ? "hide" : "show"} xp breakdown
             </button>
             {showChart && <CostChart sel={sel} />}
@@ -618,7 +601,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
             background: count ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2,
             color: count ? "#fff" : "#333",
             border: `1.5px solid ${count ? T.accent : T.border}`,
-            fontFamily: "'Press Start 2P'", fontSize: 10, letterSpacing: 1,
+            fontFamily: F.display, fontSize: 10, letterSpacing: 1,
             boxShadow: count ? "0 4px 20px rgba(166,110,255,.25)" : "none" }}>
           {count ? "⚒  CALCULATE OPTIMAL ORDER" : "SELECT ENCHANTMENTS FIRST"}
         </button>
@@ -628,7 +611,7 @@ function SingleCalc({ onSavePreset, initialPreset, edition }) {
               background: shareMsg ? "rgba(74,222,128,.1)" : "rgba(255,255,255,.03)",
               border: `1px solid ${shareMsg ? T.green : T.border}`,
               color: shareMsg ? T.green : T.muted,
-              fontSize: 11, fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap", cursor: "pointer" }}>
+              fontSize: 11, fontFamily: F.body, whiteSpace: "nowrap", cursor: "pointer" }}>
             {shareMsg || "🔗 share"}
           </button>
         )}
@@ -668,7 +651,7 @@ function SetEntry({ entry, onUpdate, onRemove, edition }) {
         <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
           <ItemIcon item={item} size={20} />
           <select value={entry.itemId} onChange={e => onUpdate({ ...entry, itemId: e.target.value, sel: {} })}
-            style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 8px", color: T.text, fontSize: 12, flex: 1, fontFamily: "'IBM Plex Mono'", outline: "none" }}>
+            style={{ background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "5px 8px", color: T.text, fontSize: 12, flex: 1, fontFamily: F.body, outline: "none" }}>
             {ITEMS.map(it => <option key={it.id} value={it.id}>{it.em} {it.name}</option>)}
           </select>
         </div>
@@ -676,7 +659,7 @@ function SetEntry({ entry, onUpdate, onRemove, edition }) {
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
             <span style={{ fontSize: 10, color: T.muted }}>qty</span>
             <button onClick={() => onUpdate({ ...entry, qty: Math.max(1, entry.qty - 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>−</button>
-            <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent, minWidth: 14, textAlign: "center" }}>{entry.qty}</span>
+            <span style={{ fontFamily: F.display, fontSize: 10, color: T.accent, minWidth: 14, textAlign: "center" }}>{entry.qty}</span>
             <button onClick={() => onUpdate({ ...entry, qty: Math.min(9, entry.qty + 1) })} style={{ width: 22, height: 22, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 4, cursor: "pointer", color: T.muted, fontSize: 12, lineHeight: 1 }}>+</button>
           </div>
           <button className="rm-btn" onClick={onRemove} style={{ fontSize: 16, color: T.red, lineHeight: 1, background: "none", border: "none", cursor: "pointer" }}>✕</button>
@@ -737,19 +720,19 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
         {entries.map(e => <SetEntry key={e.uid} entry={e} onUpdate={data => update(e.uid, data)} onRemove={() => remove(e.uid)} edition={edition} />)}
       </div>
-      <button className="add-btn" onClick={add} style={{ width: "100%", padding: "10px", marginBottom: 12, background: "transparent", border: `1.5px dashed ${T.border}`, borderRadius: 8, color: T.muted, fontSize: 12, fontFamily: "'IBM Plex Mono'", cursor: "pointer" }}>
+      <button className="add-btn" onClick={add} style={{ width: "100%", padding: "10px", marginBottom: 12, background: "transparent", border: `1.5px dashed ${T.border}`, borderRadius: 8, color: T.muted, fontSize: 12, fontFamily: F.body, cursor: "pointer" }}>
         + Add Item to Set
       </button>
       <div className="stack-mobile" style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "stretch" }}>
         <input value={presetName} onChange={e => setPresetName(e.target.value)} placeholder="save this set as..."
-          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} />
+          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 5, padding: "6px 10px", fontSize: 11, color: T.text, outline: "none", fontFamily: F.body }} />
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={savePreset} disabled={!presetName.trim() || !hasSel}
-            style={{ flex: 1, background: saved ? "rgba(74,222,128,.12)" : "rgba(166,110,255,.1)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "6px 14px", fontSize: 11, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>
+            style={{ flex: 1, background: saved ? "rgba(74,222,128,.12)" : "rgba(166,110,255,.1)", border: `1px solid ${saved ? T.green : T.border}`, borderRadius: 5, padding: "6px 14px", fontSize: 11, color: saved ? T.green : T.muted, cursor: "pointer", fontFamily: F.body, whiteSpace: "nowrap" }}>
             {saved ? "✓ saved" : "💾 save set"}
           </button>
           <button className="go-btn" onClick={calcAll} disabled={!hasSel}
-            style={{ flex: 1, padding: "6px 16px", borderRadius: 7, background: hasSel ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: hasSel ? "#fff" : "#333", border: `1.5px solid ${hasSel ? T.accent : T.border}`, fontFamily: "'Press Start 2P'", fontSize: 8, letterSpacing: .5, whiteSpace: "nowrap", boxShadow: hasSel ? "0 3px 14px rgba(166,110,255,.25)" : "none" }}>
+            style={{ flex: 1, padding: "6px 16px", borderRadius: 7, background: hasSel ? "linear-gradient(135deg,#5f1fd4,#a66eff)" : T.s2, color: hasSel ? "#fff" : "#333", border: `1.5px solid ${hasSel ? T.accent : T.border}`, fontFamily: F.display, fontSize: 8, letterSpacing: .5, whiteSpace: "nowrap", boxShadow: hasSel ? "0 3px 14px rgba(166,110,255,.25)" : "none" }}>
             ⚒ CALCULATE SET
           </button>
         </div>
@@ -766,7 +749,7 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <ItemIcon item={item} size={16} />
                     <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{item.name}</span>
-                    {e.qty > 1 && <span style={{ fontSize: 10, color: T.accent, fontFamily: "'Press Start 2P'" }}>×{e.qty}</span>}
+                    {e.qty > 1 && <span style={{ fontSize: 10, color: T.accent, fontFamily: F.display }}>×{e.qty}</span>}
                     <span style={{ fontSize: 10, color: T.muted, marginLeft: "auto" }}>{res.total} lvls/each{e.qty > 1 ? ` = ${res.total * e.qty} lvls total` : ""}</span>
                   </div>
                   <ResultSteps result={res} item={item} compact={true} />
@@ -775,7 +758,7 @@ function SetBuilder({ onSavePreset, initialPreset, edition }) {
             })}
             <div style={{ marginTop: 12, padding: "10px 14px", background: "#0a0818", border: `1px solid rgba(166,110,255,.2)`, borderRadius: 7, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 11, color: T.muted }}>Grand total XP across entire set</span>
-              <span style={{ fontFamily: "'Press Start 2P'", fontSize: 11, color: T.accent }}>{totalXp} LEVELS</span>
+              <span style={{ fontFamily: F.display, fontSize: 11, color: T.accent }}>{totalXp} LEVELS</span>
             </div>
           </Sec>
         </div>
@@ -807,7 +790,7 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
             ) : `📦 Set — ${p.entries?.length} item type${p.entries?.length !== 1 ? "s" : ""}`}
           </div>
         </div>
-        <button onClick={e => { e.stopPropagation(); onLoad(p); }} style={{ background: "rgba(166,110,255,.1)", border: `1px solid rgba(166,110,255,.2)`, borderRadius: 5, padding: "5px 10px", fontSize: 10, color: T.accent, cursor: "pointer", fontFamily: "'IBM Plex Mono'", whiteSpace: "nowrap" }}>✏ edit</button>
+        <button onClick={e => { e.stopPropagation(); onLoad(p); }} style={{ background: "rgba(166,110,255,.1)", border: `1px solid rgba(166,110,255,.2)`, borderRadius: 5, padding: "5px 10px", fontSize: 10, color: T.accent, cursor: "pointer", fontFamily: F.body, whiteSpace: "nowrap" }}>✏ edit</button>
         <button onClick={e => { e.stopPropagation(); onDelete(p.id); setExpanded(null); }} className="rm-btn" style={{ fontSize: 14, color: T.red, background: "none", border: "none", lineHeight: 1, cursor: "pointer" }}>✕</button>
         <span style={{ color: T.muted, fontSize: 12 }}>{isOpen ? "▲" : "▼"}</span>
       </div>
@@ -818,7 +801,7 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <ItemIcon item={item} size={18} />
                 <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{item.name}</span>
-                {qty > 1 && <span style={{ fontSize: 9, color: T.accent, fontFamily: "'Press Start 2P'" }}>×{qty}</span>}
+                {qty > 1 && <span style={{ fontSize: 9, color: T.accent, fontFamily: F.display }}>×{qty}</span>}
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 10 }}>
                 {Object.entries(sel).map(([id, lvl]) => (
@@ -833,7 +816,7 @@ function PresetCard({ p, expanded, setExpanded, onLoad, onDelete }) {
           {p.type === "set" && viewResults.length > 1 && (
             <div style={{ marginTop: 12, padding: "8px 12px", background: "#0a0818", border: "1px solid rgba(166,110,255,.2)", borderRadius: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 10, color: T.muted }}>Grand total</span>
-              <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent }}>{totalXp} LEVELS</span>
+              <span style={{ fontFamily: F.display, fontSize: 10, color: T.accent }}>{totalXp} LEVELS</span>
             </div>
           )}
         </div>
@@ -850,7 +833,7 @@ function PresetsPanel({ presets, onDelete, onLoad }) {
   if (!presets.length) return (
     <div style={{ textAlign: "center", padding: "48px 20px", color: T.muted }}>
       <div style={{ fontSize: 28, marginBottom: 12 }}>💾</div>
-      <div style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: "#333", marginBottom: 10 }}>NO PRESETS SAVED</div>
+      <div style={{ fontFamily: F.display, fontSize: 9, color: "#333", marginBottom: 10 }}>NO PRESETS SAVED</div>
       <p style={{ fontSize: 11, lineHeight: 1.7 }}>Save enchantment configs from the Calculator or Set Builder tabs.</p>
     </div>
   );
@@ -1032,15 +1015,15 @@ export default function App() {
       <div style={{ minHeight: "100vh", background: T.bg, padding: "24px 16px" }}>
         <div style={{ maxWidth: 820, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ fontSize: 10, letterSpacing: 3, color: "#2a2a2a", fontFamily: "'IBM Plex Mono'", marginBottom: 8 }}>⟡ MINECRAFT TOOLS ⟡</div>
-            <h1 style={{ fontFamily: "'Press Start 2P'", fontSize: "clamp(12px,2.5vw,20px)", color: T.accent, lineHeight: 1.6, textShadow: "0 0 20px rgba(166,110,255,.6)" }}>ANVIL OPTIMIZER</h1>
+            <div style={{ fontSize: 10, letterSpacing: 3, color: "#2a2a2a", fontFamily: F.body, marginBottom: 8 }}>⟡ MINECRAFT TOOLS ⟡</div>
+            <h1 style={{ fontFamily: F.display, fontSize: "clamp(12px,2.5vw,20px)", color: T.accent, lineHeight: 1.6, textShadow: "0 0 20px rgba(166,110,255,.6)" }}>ANVIL OPTIMIZER</h1>
             <p style={{ marginTop: 6, color: "#333", fontSize: 11 }}>Wiki · Presets · Set Builder · DP-optimized XP cost</p>
             <div style={{ marginTop: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
               <EditionToggle edition={edition} onChange={handleEdition} />
               <VersionBadge onClick={() => setTab("changelog")} />
               <button onClick={() => setPaletteOpen(true)}
                 style={{
-                  fontFamily: "'IBM Plex Mono'", fontSize: 10, color: T.muted2,
+                  fontFamily: F.body, fontSize: 10, color: T.muted2,
                   background: T.s2, border: `1px solid ${T.border}`, borderRadius: 6,
                   padding: "5px 10px", cursor: "pointer"
                 }}>
@@ -1057,7 +1040,7 @@ export default function App() {
           <div className="tab-grid" style={{ display: "flex", gap: 3, marginBottom: 20, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: 4 }}>
             {tabs.map(t => (
               <button key={t.id} className="tab-btn" onClick={() => setTab(t.id)}
-                style={{ flex: 1, padding: "9px 0", borderRadius: 5, border: "none", background: tab === t.id ? T.accentBg : "transparent", color: tab === t.id ? T.accent : T.muted, fontFamily: "'Press Start 2P'", fontSize: "clamp(5px,1.1vw,8px)", boxShadow: tab === t.id ? "inset 0 0 0 1px rgba(166,110,255,.25)" : "none", cursor: "pointer" }}>
+                style={{ flex: 1, padding: "9px 0", borderRadius: 5, border: "none", background: tab === t.id ? T.accentBg : "transparent", color: tab === t.id ? T.accent : T.muted, fontFamily: F.display, fontSize: "clamp(5px,1.1vw,8px)", boxShadow: tab === t.id ? "inset 0 0 0 1px rgba(166,110,255,.25)" : "none", cursor: "pointer" }}>
                 {t.label}
               </button>
             ))}
