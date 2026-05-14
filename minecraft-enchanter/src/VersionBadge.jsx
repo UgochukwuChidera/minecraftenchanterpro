@@ -1,3 +1,5 @@
+import { F } from "./theme.js";
+
 // VersionBadge.jsx
 // Single source of truth for app version — matches Changelog latest entry
 // Usage: import VersionBadge from "./VersionBadge";
@@ -10,9 +12,9 @@ export default function VersionBadge({ onClick }) {
     <span
       onClick={onClick}
       className="tooltip-trigger"
-      data-tooltip={`v${APP_VERSION} — Click to view technical changelog and release history.`}
-      style={{
-        fontFamily: "'Press Start 2P', monospace",
+        data-tooltip={`v${APP_VERSION} — Click to view technical changelog and release history.`}
+        style={{
+        fontFamily: F.display,
         fontSize: 7,
         color: "#a66eff",
         background: "rgba(166,110,255,0.05)",

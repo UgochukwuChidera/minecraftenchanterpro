@@ -5,14 +5,7 @@
 //  Usage:  <MaterialCalc E={E} ITEMS={ITEMS} rom={rom} />
 // ═══════════════════════════════════════════════════════════
 import { useState, useMemo } from "react";
-
-const T = {
-  bg: "#080808", surface: "#0f0f0f", s2: "#111111", s3: "#161616",
-  border: "#1e1e1e", b2: "#252525",
-  accent: "#a66eff", accentBg: "rgba(166,110,255,0.08)",
-  text: "#e0e0e0", muted: "#555", muted2: "#888",
-  green: "#4ade80", red: "#f87171", yellow: "#fbbf24", blue: "#93c5fd", orange: "#fb923c",
-};
+import { T, F } from "./theme.js";
 
 // ── Tiers ────────────────────────────────────────────────
 const TIERS = {
@@ -163,9 +156,9 @@ function Sec({ label, title, children }) {
   return (
     <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 18, marginBottom: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-        {label && <span style={{ fontFamily: "'Press Start 2P'", fontSize: 7, color: "#333" }}>{label}</span>}
+        {label && <span className="sec-label">{label}</span>}
         <div style={{ flex: 1, height: 1, background: T.border }} />
-        <span style={{ fontFamily: "'Press Start 2P'", fontSize: 8, color: T.accent }}>{title}</span>
+        <span className="sec-title">{title}</span>
       </div>
       {children}
     </div>
@@ -180,7 +173,7 @@ function MatRow({ icon, label, qty, sub, color }) {
       {icon && <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>}
       <span style={{ flex: 1, fontSize: 12, color: color || T.text }}>{label}</span>
       {sub && <span style={{ fontSize: 10, color: T.muted }}>{sub}</span>}
-      <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10,
+      <span style={{ fontFamily: F.display, fontSize: 10,
         color: color || T.accent, minWidth: 30, textAlign: "right" }}>×{qty}</span>
     </div>
   );
@@ -294,7 +287,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
   if (itemMats["_tripwire_note"]) notes.push("Tripwire Hook requires: 1 Iron Ingot + 1 Stick + 1 Oak Plank.");
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+    <div className="font-body">
 
       {/* Item selector */}
       <Sec label="01" title="ITEM & MATERIAL">
@@ -313,7 +306,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
                   : it.em}
               </div>
               <div style={{ marginTop: 3, fontSize: 6, color: itemId === it.id ? "#c4a3ff" : "#555",
-                fontFamily: "'Press Start 2P'", lineHeight: 1.5 }}>{it.name.toUpperCase()}</div>
+                fontFamily: F.display, lineHeight: 1.5 }}>{it.name.toUpperCase()}</div>
             </div>
           ))}
         </div>
@@ -351,7 +344,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
           <button onClick={() => setQty(q => Math.max(1, q - 1))}
             style={{ width: 26, height: 26, background: T.s3, border: `1px solid ${T.border}`,
               borderRadius: 5, cursor: "pointer", color: T.muted, fontSize: 14 }}>−</button>
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 12, color: T.accent, minWidth: 20, textAlign: "center" }}>{qty}</span>
+          <span style={{ fontFamily: F.display, fontSize: 12, color: T.accent, minWidth: 20, textAlign: "center" }}>{qty}</span>
           <button onClick={() => setQty(q => Math.min(64, q + 1))}
             style={{ width: 26, height: 26, background: T.s3, border: `1px solid ${T.border}`,
               borderRadius: 5, cursor: "pointer", color: T.muted, fontSize: 14 }}>+</button>
@@ -402,7 +395,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
             padding: "9px 12px", background: T.s2, border: `1px solid ${T.border}`, borderRadius: 7 }}>
             <span style={{ fontSize: 12, color: T.muted2 }}>Base durability</span>
-            <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.muted2 }}>{baseDur.toLocaleString()}</span>
+            <span style={{ fontFamily: F.display, fontSize: 10, color: T.muted2 }}>{baseDur.toLocaleString()}</span>
           </div>
 
           {unbreakingLvl > 0 && (
@@ -411,7 +404,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
               <span style={{ fontSize: 12, color: T.blue }}>
                 With Unbreaking {["","I","II","III"][unbreakingLvl]} (×{unbreakingMult(unbreakingLvl)})
               </span>
-              <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.blue }}>{effectiveDur.toLocaleString()}</span>
+              <span style={{ fontFamily: F.display, fontSize: 10, color: T.blue }}>{effectiveDur.toLocaleString()}</span>
             </div>
           )}
 
@@ -455,7 +448,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
                 <>
                   {Object.keys(craftingMats).length > 0 && (
                     <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 9, color: T.muted, fontFamily: "'Press Start 2P'", marginBottom: 7 }}>
+                      <div style={{ fontSize: 9, color: T.muted, fontFamily: F.display, marginBottom: 7 }}>
                         ITEM CRAFTING {qty > 1 ? `(×${qty})` : ""}
                       </div>
                       {Object.entries(craftingMats).map(([k, v]) => (
@@ -466,7 +459,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
 
                   {Object.keys(bookingMats).length > 0 && (
                     <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 9, color: T.muted, fontFamily: "'Press Start 2P'", marginBottom: 7 }}>
+                      <div style={{ fontSize: 9, color: T.muted, fontFamily: F.display, marginBottom: 7 }}>
                         ENCHANTED BOOKS ({bookCount} books)
                       </div>
                       {Object.entries(bookingMats).map(([k, v]) => (
@@ -477,7 +470,7 @@ export default function MaterialCalc({ E, ITEMS, rom }) {
 
                   {Object.keys(anvilM).length > 0 && (
                     <div style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 9, color: T.muted, fontFamily: "'Press Start 2P'", marginBottom: 7 }}>
+                      <div style={{ fontSize: 9, color: T.muted, fontFamily: F.display, marginBottom: 7 }}>
                         ANVIL (3 Iron Blocks + 4 Iron Ingots)
                       </div>
                       {Object.entries(anvilM).map(([k, v]) => (

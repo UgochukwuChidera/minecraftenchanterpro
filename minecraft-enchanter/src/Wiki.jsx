@@ -1,13 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { E, ITEMS } from "./data.js";
-
-const T = {
-  bg: "#080808", surface: "#0f0f0f", s2: "#111111", s3: "#161616",
-  border: "#1e1e1e",
-  accent: "#a66eff", accentBg: "rgba(166,110,255,0.08)",
-  text: "#e0e0e0", muted: "#555", muted2: "#888",
-  green: "#4ade80", red: "#f87171", yellow: "#fbbf24", blue: "#93c5fd", orange: "#fb923c",
-};
+import { T, F } from "./theme.js";
 
 // Grouping logic for enchantments
 const ENCHANT_GROUPS = [
@@ -107,9 +100,9 @@ export default function Wiki() {
   }, [search, activeGroup]);
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+    <div className="font-body">
       <div style={{ marginBottom: 20, padding: "14px 18px", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10 }}>
-        <div style={{ fontFamily: "'Press Start 2P'", fontSize: 9, color: T.accent, marginBottom: 8 }}>
+        <div style={{ fontFamily: F.display, fontSize: 9, color: T.accent, marginBottom: 8 }}>
           ENCHANTMENT SYSTEM WIKI
         </div>
         <p style={{ fontSize: 11, color: T.muted2, lineHeight: 1.7 }}>
@@ -121,14 +114,14 @@ export default function Wiki() {
       <div style={{ marginBottom: 20, padding: "16px 20px", background: "#0a0a0a", border: `1px solid rgba(166,110,255,0.2)`, borderRadius: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
           <span style={{ fontSize: 18 }}>⚙️</span>
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.text }}>Core Mechanics</span>
+          <span style={{ fontFamily: F.display, fontSize: 10, color: T.text }}>Core Mechanics</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 11, color: T.muted, lineHeight: 1.6 }}>
           <p>
             <strong style={{ color: "#d4baff" }}>Enchanting Table vs. Anvil:</strong> Enchanting tables provide random enchants for a flat XP cost based on bookshelves. Anvils allow deterministic combinations (books + tools or tool + tool), but they hit you with a compounding Prior Work Penalty.
           </p>
           <p>
-            <strong style={{ color: "#d4baff" }}>Prior Work Penalty:</strong> Every anvil use increases the penalty exponentially: <span style={{ fontFamily: "monospace", color: T.yellow }}>0 → 1 → 3 → 7 → 15 → 31</span> levels.
+            <strong style={{ color: "#d4baff" }}>Prior Work Penalty:</strong> Every anvil use increases the penalty exponentially: <span style={{ fontFamily: F.body, color: T.yellow }}>0 → 1 → 3 → 7 → 15 → 31</span> levels.
           </p>
           <p>
             <strong style={{ color: "#d4baff" }}>Anvil Cost Multipliers:</strong> Enchantments transferred through an anvil have a hidden base cost. For example, Sharpness costs 1 level per tier, but Swift Sneak costs 8 levels per tier. This calculates into the total XP cost of the anvil operation!
@@ -142,7 +135,7 @@ export default function Wiki() {
           value={search} 
           onChange={e => setSearch(e.target.value)} 
           placeholder="🔍 Search enchantments..."
-          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: T.text, outline: "none", fontFamily: "'IBM Plex Mono'" }} 
+          style={{ flex: 1, background: T.s3, border: `1px solid ${T.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 12, color: T.text, outline: "none", fontFamily: F.body }} 
         />
         <div style={{ minWidth: 200 }}>
           <WikiDropdown 
@@ -163,7 +156,7 @@ export default function Wiki() {
         
         {filteredGroups.map(group => (
           <div key={group.id}>
-            <div style={{ fontSize: 10, fontFamily: "'Press Start 2P'", color: T.accent, marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ fontSize: 10, fontFamily: F.display, color: T.accent, marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${T.border}` }}>
               {group.title.toUpperCase()}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -178,7 +171,7 @@ export default function Wiki() {
                           <span 
                             className="tooltip-trigger" 
                             data-tooltip="Java Edition only — this enchantment does not exist in Bedrock Edition." 
-                            style={{ fontSize: 7, color: T.java || "#ed8b00", padding: "2px 6px", border: `1px solid ${T.java || "#ed8b00"}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}
+                            style={{ fontSize: 7, color: T.java || "#ed8b00", padding: "2px 6px", border: `1px solid ${T.java || "#ed8b00"}44`, borderRadius: 4, fontFamily: F.display }}
                           >
                             JAVA ONLY
                           </span>
@@ -187,7 +180,7 @@ export default function Wiki() {
                           <span 
                             className="tooltip-trigger" 
                             data-tooltip="Curse enchantment — generally negative effects and cannot be removed via Grindstone." 
-                            style={{ fontSize: 7, color: T.red, padding: "2px 6px", border: `1px solid ${T.red}44`, borderRadius: 4, fontFamily: "'Press Start 2P'" }}
+                            style={{ fontSize: 7, color: T.red, padding: "2px 6px", border: `1px solid ${T.red}44`, borderRadius: 4, fontFamily: F.display }}
                           >
                             CURSE
                           </span>
@@ -204,7 +197,7 @@ export default function Wiki() {
                     <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 10 }}>
                       {enc.levels.map((lvl, idx) => (
                         <div key={idx} style={{ fontSize: 10, color: "#aaa" }}>
-                          <span style={{ color: T.accent, fontFamily: "'Press Start 2P'", fontSize: 7, display: "inline-block", minWidth: 20 }}>{idx + 1}</span> {lvl}
+                          <span style={{ color: T.accent, fontFamily: F.display, fontSize: 7, display: "inline-block", minWidth: 20 }}>{idx + 1}</span> {lvl}
                         </div>
                       ))}
                     </div>
@@ -232,7 +225,7 @@ export default function Wiki() {
       <div style={{ marginTop: 30, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: "16px 20px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <span style={{ fontSize: 18 }}>❓</span>
-          <span style={{ fontFamily: "'Press Start 2P'", fontSize: 10, color: T.accent }}>Frequently Asked Questions</span>
+          <span style={{ fontFamily: F.display, fontSize: 10, color: T.accent }}>Frequently Asked Questions</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {FAQS.map((faq, idx) => (
